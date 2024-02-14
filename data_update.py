@@ -41,12 +41,13 @@ def anpassen_und_speichern():
             raum = eintrag.get('Raum', '')
             if raum:
                 raum, gebaeude = trenne_gebaeude_und_raum(raum)
-                if gebaeude:
+                # Filtere nur Einträge für das Gebäude MCI IV
+                if gebaeude == "MCI IV":
                     eintrag['Raumnummer'] = raum
                     eintrag['Gebaeude'] = gebaeude
                     angepasste_daten.append(eintrag)
                 else:
-                    print(f"Überspringe Eintrag wegen fehlendem oder ungültigem Gebäude: {raum}")
+                    print(f"Überspringe Eintrag, da nicht in MCI IV: {raum} im Gebäude {gebaeude}")
             else:
                 print(f"Überspringe Eintrag wegen fehlender Raumangabe: {eintrag}")
         else:
@@ -55,7 +56,7 @@ def anpassen_und_speichern():
     if angepasste_daten:
         with open('angepasste_kalenderdaten.json', 'w') as f:
             json.dump(angepasste_daten, f, indent=4, default=str)
-        print('Angepasste Daten wurden erfolgreich gespeichert.')
+        print('Angepasste Daten wurden erfolgreich in angepasste_kalenderdaten.json gespeichert.')
     else:
         print('Keine Daten zur Anpassung gefunden.')
 
