@@ -1,1423 +1,625 @@
 [
     {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
+        "Raumnummer": "4B-001",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "12:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:45"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "10:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-204",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-204",
-        "Verfuegbar von": "15:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "10:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "11:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "11:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-006",
-        "Verfuegbar von": "12:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "307",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "11:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "307",
-        "Verfuegbar von": "12:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "308",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "11:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "308",
-        "Verfuegbar von": "11:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "12:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
-        "Verfuegbar von": "13:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "17:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-008",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-008",
-        "Verfuegbar von": "15:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "261",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "261",
-        "Verfuegbar von": "14:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-003",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "13:45"
     },
     {
-        "Datum": "Dienstag13.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-003",
         "Verfuegbar von": "14:15",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "164",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-005",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "14:00"
-    },
-    {
-        "Datum": "Dienstag13.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "164",
-        "Verfuegbar von": "16:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "307",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-006",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "08:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "307",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-006",
         "Verfuegbar von": "12:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "404, 403",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-007",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "404, 403",
-        "Verfuegbar von": "15:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
+        "Raumnummer": "4B-117",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "12:15",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-501",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "11:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
+        "Raumnummer": "4C-502",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:30"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
-        "Verfuegbar von": "09:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-008",
+        "Raumnummer": "4C-503",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:30"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-008",
-        "Verfuegbar von": "09:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-504",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:45"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
-        "Verfuegbar von": "17:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-505",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-020",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-024",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-027",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-135",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-393",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-412",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-434",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-438",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Tuesday, 13.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-439",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-001",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "09:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-001",
         "Verfuegbar von": "09:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-204",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-204",
-        "Verfuegbar von": "15:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "406",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:45"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "406",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:45"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "308",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:45"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "308",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "310",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:45"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "310",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-003",
-        "Verfuegbar von": "07:00",
         "Verfuegbar bis": "10:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-003",
-        "Verfuegbar von": "10:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-001",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "10:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-001",
         "Verfuegbar von": "10:45",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "164",
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-003",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "10:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "164",
-        "Verfuegbar von": "11:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "11:30"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:00"
+        "Raumnummer": "4B-003",
+        "Verfuegbar von": "10:45",
+        "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "17:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
+        "Raumnummer": "4B-005",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
-        "Verfuegbar von": "17:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Mittwoch14.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "301/302",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "403",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "403",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
+        "Raumnummer": "4B-006",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
+        "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Donnerstag15.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
+        "Raumnummer": "4B-007",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:45"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
-        "Verfuegbar von": "17:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "401/402",
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-117",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "401/402",
-        "Verfuegbar von": "17:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-501",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
-        "Verfuegbar von": "12:15",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Donnerstag15.02.2024",
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-502",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-503",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-504",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-505",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-020",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-024",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-027",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-135",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-393",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-412",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-434",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-438",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Wednesday, 14.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-439",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-001",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-003",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-005",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-006",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-007",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-117",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-501",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-502",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-503",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-504",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-505",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-020",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-024",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-027",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-135",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-393",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-412",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-434",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-438",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Thursday, 15.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4A-439",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "09:00"
     },
     {
-        "Datum": "Donnerstag15.02.2024",
+        "Datum": "Thursday, 15.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4A-439",
         "Verfuegbar von": "10:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
-        "Verfuegbar von": "12:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "406",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "406",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "234",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "10:30"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "234",
-        "Verfuegbar von": "12:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-008",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "12:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4B-008",
-        "Verfuegbar von": "13:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-032",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-032",
-        "Verfuegbar von": "16:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "051",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "051",
-        "Verfuegbar von": "14:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "17:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "303",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "15:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "052",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "14:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "052",
-        "Verfuegbar von": "17:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Donnerstag15.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "551/552",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "14:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "152",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "152",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "152",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "07:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "152",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "09:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "09:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "08:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "09:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "09:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "09:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "09:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "11:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "052",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "052",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4C-313  SBT Labor",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-439",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:15"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-439",
-        "Verfuegbar von": "09:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "551/552",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "551/552",
-        "Verfuegbar von": "16:30",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:45"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "162",
-        "Verfuegbar von": "13:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-439",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-439",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
+        "Datum": "Friday, 16.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-001",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "09:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
+        "Datum": "Friday, 16.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-001",
         "Verfuegbar von": "10:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
+        "Datum": "Friday, 16.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
+        "Raumnummer": "4B-003",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
+        "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
+        "Datum": "Friday, 16.02.2024",
         "Gebaeude": "MCI IV",
-        "Raumnummer": "4A-362",
-        "Verfuegbar von": "12:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
+        "Raumnummer": "4B-005",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "17:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "401/402",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "401/402",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "306",
-        "Verfuegbar von": "16:45",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "406",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "406",
-        "Verfuegbar von": "13:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
+        "Datum": "Friday, 16.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-006",
         "Verfuegbar von": "07:00",
         "Verfuegbar bis": "09:30"
     },
     {
-        "Datum": "Freitag16.02.2024",
+        "Datum": "Friday, 16.02.2024",
         "Gebaeude": "MCI IV",
         "Raumnummer": "4B-006",
         "Verfuegbar von": "11:45",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-007",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:45"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "304",
-        "Verfuegbar von": "11:15",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4B-117",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "16:45",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "052",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-501",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "052",
-        "Verfuegbar von": "17:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "403",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-502",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "14:30"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "403",
-        "Verfuegbar von": "15:00",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "403",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-503",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "15:00"
-    },
-    {
-        "Datum": "Freitag16.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "403",
-        "Verfuegbar von": "15:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "551/552",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-504",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "08:30"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI II",
-        "Raumnummer": "551/552",
-        "Verfuegbar von": "16:30",
         "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4C-505",
         "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
+        "Verfuegbar bis": "18:00"
     },
     {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-020",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-024",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-027",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-135",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-393",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-412",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-434",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-438",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "18:00"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-439",
+        "Verfuegbar von": "07:00",
+        "Verfuegbar bis": "08:15"
+    },
+    {
+        "Datum": "Friday, 16.02.2024",
+        "Gebaeude": "MCI IV",
+        "Raumnummer": "4A-439",
         "Verfuegbar von": "12:15",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "405",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "401/402",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "09:00"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "401/402",
-        "Verfuegbar von": "17:00",
-        "Verfuegbar bis": "18:00"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "07:00",
-        "Verfuegbar bis": "13:30"
-    },
-    {
-        "Datum": "Samstag17.02.2024",
-        "Gebaeude": "MCI I",
-        "Raumnummer": "305",
-        "Verfuegbar von": "16:45",
         "Verfuegbar bis": "18:00"
     }
 ]
