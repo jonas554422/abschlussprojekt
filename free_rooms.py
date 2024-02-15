@@ -1,11 +1,13 @@
 from datetime import datetime, time
 import json
 import re
+from tinydb import TinyDB, Query
 
 class RaumVerwaltung:
-    def __init__(self, gesamtraeume, daten_pfad):
+    def __init__(self, gesamtraeume, daten_pfad, db_pfad):
         self.gesamtraeume = gesamtraeume
         self.daten_pfad = daten_pfad
+        self.db = TinyDB(db_pfad)  # TinyDB-Instanz
         self.angepasste_daten = self.lese_angepasste_daten()
 
     def lese_angepasste_daten(self):
@@ -65,9 +67,11 @@ class RaumVerwaltung:
         return neue_verfuegbarkeiten
 
     def speichere_verfuegbare_raeume(self, verfuegbare_raeume):
-        with open('verfuegbare_raeume.json', 'w') as f:
-            json.dump(verfuegbare_raeume, f, indent=4)
-        print('Verfügbare Räume wurden erfolgreich in verfuegbare_raeume.json gespeichert.')
+        # Leert die Datenbank, um die neuen Daten einzufügen
+        self.db.truncate()
+        # Fügt die neuen Daten ein
+        self.db.insert_multiple(verfuegbare_raeume)
+        print('Verfügbare Räume wurden erfolgreich in der TinyDB gespeichert.')
 
 # Beispiel für die Verwendung der Klasse
 gesamtraeume = [
@@ -77,6 +81,6 @@ gesamtraeume = [
     "4A-412", "4A-434", "4A-438", "4A-439"
 ]
 
-verwaltung = RaumVerwaltung(gesamtraeume, 'angepasste_kalenderdaten.json')
+verwaltung = RaumVerwaltung(gesamtraeume, 'angepasste_kalenderdaten.json', 'verfuegbare_raeume_db.json')  # Pfad zur TinyDB hinzugefügt
 verfuegbare_raeume = verwaltung.generiere_verfuegbare_raeume()
 verwaltung.speichere_verfuegbare_raeume(verfuegbare_raeume)
