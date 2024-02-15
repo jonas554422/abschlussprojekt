@@ -1,5 +1,6 @@
 import re
 from tinydb import TinyDB, Query
+from datetime import datetime
 
 class UserDatabase:
     def __init__(self, db_path='reservation.json', available_rooms_path='verfuegbare_raeume_db.json'):
@@ -26,22 +27,37 @@ class UserDatabase:
         """Versucht, den Benutzer zu authentifizieren, basierend auf der E-Mail-Adresse."""
         return self.db.contains(Query().email == email)
     
+
     def is_room_available(self, room_number, date, start_time, end_time):
-        """Überprüft, ob der Raum zum gewünschten Zeitpunkt verfügbar ist."""
-        reservations = self.reservation_table.search((Query().room_number == room_number) & (Query().date == date))
-        for reservation in reservations:
-            if (start_time < reservation['end_time'] and end_time > reservation['start_time']):
-                return False  # Zeitkonflikt gefunden
-    
-        available_rooms = self.available_rooms_db.search(Query().room_number == room_number)
-        for available in available_rooms:
-            if date == available['Datum'] and start_time >= available['Verfuegbar von'] and end_time <= available['Verfuegbar bis']:
-                return True  # Der Raum ist verfügbar
+        print(f"Überprüfung für Raum {room_number} am {date}, von {start_time} bis {end_time}")
+        
+        # Konvertiere die Eingabe in datetime Objekte für genaue Vergleiche
+        date_format = "%A, %d.%m.%Y"
+        time_format = "%H:%M"
+        
+        # Konvertiere Datum und Zeit in das erforderliche Format
+        date_obj = datetime.strptime(date, date_format)
+        start_time_obj = datetime.strptime(start_time, time_format).time()
+        end_time_obj = datetime.strptime(end_time, time_format).time()
+        
+        # Hole alle Verfügbarkeiten für den gegebenen Raum
+        availabilities = self.available_rooms_db.search(Query().Raumnummer == room_number)
+        print(f"Gefundene Verfügbarkeiten für {room_number}: {availabilities}")
+        
+        # Überprüfe, ob das Datum und die Zeit innerhalb der verfügbaren Zeiten liegen
+        for available in availabilities:
+            avail_date_obj = datetime.strptime(available['Datum'], date_format)
+            avail_start_time_obj = datetime.strptime(available['Verfuegbar von'], time_format).time()
+            avail_end_time_obj = datetime.strptime(available['Verfuegbar bis'], time_format).time()
 
-        return False  # Standardmäßig nicht verfügbar, wenn keine Übereinstimmung gefunden wurde
+            # Vergleiche Datum und Zeit
+            if date_obj == avail_date_obj and start_time_obj >= avail_start_time_obj and end_time_obj <= avail_end_time_obj:
+                print("Raum ist laut Verfügbarkeitsdatenbank verfügbar.")
+                return True
+        
+        print("Raum ist standardmäßig nicht verfügbar.")
+        return False
 
-
-    
 
     def add_reservation(self, email, room_number, date, start_time, end_time):
         """Fügt eine neue Reservierung hinzu, wenn der Raum verfügbar ist."""
@@ -53,7 +69,7 @@ class UserDatabase:
                 'start_time': start_time,
                 'end_time': end_time
             }
-            self.reservations_table.insert(reservation)
+            self.reservation_table.insert(reservation)
             return True
         else:
             return False
@@ -89,4 +105,9 @@ def main():
         print("Benutzer nicht gefunden oder nicht authentifiziert.")
 
 if __name__ == "__main__":
-    main()
+    db = UserDatabase()  # Erstelle eine Instanz deiner Klasse
+    # Beispielhafter Aufruf der is_room_available Methode
+    verfügbar = db.is_room_available("4B-001", "Thursday, 15.02.2024", "09:00", "11:00")
+    print(f"Raum verfügbar: {verfügbar}")
+    
+
