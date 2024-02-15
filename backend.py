@@ -58,21 +58,47 @@ class UserDatabase:
         print("Raum ist standardmäßig nicht verfügbar.")
         return False
 
-
     def add_reservation(self, email, room_number, date, start_time, end_time):
-        """Fügt eine neue Reservierung hinzu, wenn der Raum verfügbar ist."""
-        if self.is_room_available(room_number, date, start_time, end_time):
-            reservation = {
-                'email': email,
-                'room_number': room_number,
-                'date': date,
-                'start_time': start_time,
-                'end_time': end_time
-            }
-            self.reservation_table.insert(reservation)
-            return True
-        else:
-            return False
+        """Fügt eine neue Reservierung hinzu, wenn der Raum verfügbar ist und keine Überschneidungen vorliegen."""
+        # Überprüfe zuerst, ob der Raum zum gewünschten Zeitpunkt verfügbar ist
+        if not self.is_room_available(room_number, date, start_time, end_time):
+            return False, "Raum ist zu diesem Zeitpunkt nicht verfügbar."
+
+        # Konvertiere die Eingabe in datetime Objekte für genaue Vergleiche
+        date_format = "%A, %d.%m.%Y"    
+        time_format = "%H:%M"
+        start_datetime = datetime.strptime(f"{date} {start_time}", f"{date_format} {time_format}")
+        end_datetime = datetime.strptime(f"{date} {end_time}", f"{date_format} {time_format}")
+
+        # Überprüfe, ob bereits eine Reservierung für den Raum in dem angegebenen Zeitraum existiert
+        existing_reservations = self.reservation_table.search((Query().room_number == room_number) & (Query().date == date))
+        for reservation in existing_reservations:
+            existing_start = datetime.strptime(f"{reservation['date']} {reservation['start_time']}", f"{date_format} {time_format}")
+            existing_end = datetime.strptime(f"{reservation['date']} {reservation['end_time']}", f"{date_format} {time_format}")
+            if not (existing_end <= start_datetime or existing_start >= end_datetime):
+                # Es existiert bereits eine Reservierung, die sich mit der angeforderten Zeit überschneidet
+                return False, "Es existiert bereits eine Reservierung für diesen Zeitraum."
+
+        # Wenn keine Überschneidungen gefunden wurden, füge die neue Reservierung hinzu
+        self.reservation_table.insert({
+            'email': email,
+            'room_number': room_number,
+            'date': date,
+            'start_time': start_time,
+            'end_time': end_time
+        })
+        return True, "Reservierung erfolgreich hinzugefügt."
+    
+    #Methoder um Resevierungen des Nutzers anzuzeigen
+    def get_user_reservations(self, email):
+        """Gibt alle Reservierungen für einen bestimmten Benutzer zurück."""
+        return self.reservation_table.search(Query().email == email)
+    
+    def cancel_reservation(self, reservation_id):
+        """Löscht eine Reservierung basierend auf der Reservierungs-ID."""
+        self.reservation_table.remove(doc_ids=[reservation_id])
+        return True
+
 
 def main():
     db = UserDatabase()  # Erstellen Sie eine Instanz der UserDatabase-Klasse
