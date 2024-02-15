@@ -1,103 +1,96 @@
 import streamlit as st
-from backend import lade_verfuegbare_raeume, speichere_registrierung, ist_registriert
-import datetime
-import re
+from tinydb import TinyDB, Query
+from datetime import datetime, timedelta
+import locale
+from backend import UserDatabase
 
-class RaumBuchungApp:
-    MCI_EMAIL_REGEX = r'^[a-zA-Z]{2}\d{4}@mci4me\.at$'
+# Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
+# Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
+locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
 
-    def __init__(self):
-        self.init_session_state()
-        verfuegbare_raeume = lade_verfuegbare_raeume()
-        self.gesamtraeume = sorted(set(raum['Raumnummer'] for raum in verfuegbare_raeume))
+# Pfad zur Datenbank für verfügbare Räume
+DB_PATH = 'verfuegbare_raeume_db.json'
 
-    @staticmethod
-    def init_session_state():
-        if 'authenticated' not in st.session_state:
-            st.session_state['authenticated'] = False
-        if 'view' not in st.session_state:
-            st.session_state['view'] = 'Verfügbare Räume'
-        if 'auth_message' not in st.session_state:
-            st.session_state['auth_message'] = ''
+# Initialisierung des Session State für den Anmeldestatus, falls noch nicht vorhanden
+if 'logged_in_user' not in st.session_state:
+    st.session_state['logged_in_user'] = None
 
-    @staticmethod
-    def check_mci_email(email):
-        return re.match(RaumBuchungApp.MCI_EMAIL_REGEX, email) is not None
+# UserDatabase-Instanz erstellen
+user_db = UserDatabase('reservation.json', 'verfuegbare_raeume_db.json')
 
-    def authenticate(self, email):
-        if self.check_mci_email(email) and ist_registriert(email):
-            st.session_state['authenticated'] = True
-            st.session_state['auth_message'] = 'Anmeldung erfolgreich!'
-            st.session_state['view'] = 'Verfügbare Räume'
-        elif not ist_registriert(email):
-            st.session_state['authenticated'] = False
-            st.sidebar.error('E-Mail-Adresse nicht registriert.')
-        else:
-            st.session_state['authenticated'] = False
-            st.sidebar.error('Ungültige MCI-E-Mail-Adresse.')
-
-    def login_form(self):
-        with st.sidebar:
-            email = st.text_input("MCI-E-Mail-Adresse")
-            if st.button("Anmelden"):
-                self.authenticate(email)
-
-    def registrierungs_formular(self):
-        name = st.text_input("Name")
-        email = st.text_input("E-Mail-Adresse")
-        if st.button("Registrieren"):
-            if self.check_mci_email(email):
-                erfolg = speichere_registrierung(name, email)
-                if erfolg:
-                    st.success(f"{name} wurde erfolgreich registriert!")
-                else:
-                    st.error("Diese E-Mail-Adresse ist bereits vergeben.")
+def display_login():
+    """Zeigt das Login-System an."""
+    with st.sidebar:
+        login_email = st.text_input("Email einloggen", key="login_email")
+        if st.button("Einloggen", key="login_button"):
+            if user_db.authenticate(login_email):
+                st.session_state['logged_in_user'] = login_email
+                st.sidebar.success('Anmeldung erfolgreich!')
             else:
-                st.error("Ungültige MCI-E-Mail-Adresse.")
+                st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
 
-    def suche_nach_raum(self):
-        ausgewaehlter_raum = st.selectbox("Wählen Sie einen Raum:", self.gesamtraeume)
-        self.raeume_anzeigen(ausgewaehlter_raum)
+def display_registration():
+    """Zeigt das Registrierungs-System an."""
+    with st.sidebar:
+        reg_email = st.text_input("Email registrieren", key="reg_email")
+        if st.button("Registrieren", key="register_button"):
+            registration_result = user_db.register_user(reg_email)
+            if registration_result is True:
+                st.sidebar.success('Registrierung erfolgreich!')
+            else:
+                st.sidebar.error(registration_result)
 
-    def raeume_anzeigen(self, ausgewaehlter_raum):
-        verfuegbare_raeume = lade_verfuegbare_raeume()
-        gefilterte_raeume = [raum for raum in verfuegbare_raeume if raum['Raumnummer'] == ausgewaehlter_raum]
-        
-        for raum in gefilterte_raeume:
-            st.write(f"{raum['Datum']}: Verfügbar von {raum['Verfuegbar von']} bis {raum['Verfuegbar bis']}.")
+def display_available_rooms():
+    db = TinyDB(DB_PATH)
+    rooms = db.all()
+    if rooms:
+        room_numbers = [room['Raumnummer'] for room in rooms]
+        selected_room = st.selectbox('Wählen Sie einen Raum', room_numbers)
 
-    def abmelden(self):
-        if st.session_state['authenticated']:
-            if st.session_state['auth_message']:
-                if st.sidebar.button("Abmelden"):
-                    st.session_state['authenticated'] = False
-                    st.session_state['auth_message'] = ''
-                    st.session_state['view'] = 'Verfügbare Räume'
+        # Anzeigen der verfügbaren Daten für den ausgewählten Raum
+        available_times = [room for room in rooms if room['Raumnummer'] == selected_room]
+        if available_times:
+            for room in available_times:
+                st.write(f"Raum {room['Raumnummer']} ist verfügbar am {room['Datum']} von {room['Verfuegbar von']} bis {room['Verfuegbar bis']}.")
 
-    def handle_view(self):
-        option = "Verfügbare Räume"
+            date = st.date_input("Datum wählen", min_value=datetime.today())
+            start_time = st.time_input("Startzeit wählen")
+            end_time = st.time_input("Endzeit wählen")
 
-        if not st.session_state['authenticated']:
-            option = st.sidebar.radio("Navigation", ["Anmelden", "Registrieren"])
-        elif st.session_state['view'] == 'Verfügbare Räume':
-            option = st.sidebar.radio("Navigation", ["Suche nach Raum", "Abmelden"])
+            formatted_date = date.strftime('%A, %d.%m.%Y')
+            formatted_start_time = start_time.strftime('%H:%M')
+            formatted_end_time = end_time.strftime('%H:%M')
 
-        if option == "Anmelden":
-            self.login_form()
-            if st.session_state['auth_message']:
-                if st.button("Hier klicken, um zum Buchungssystem zu gelangen"):
-                    st.session_state['auth_message'] = ''
-        elif option == "Registrieren":
-            self.registrierungs_formular()
-        elif option == "Suche nach Raum":
-            self.suche_nach_raum()
-            self.abmelden()
-        elif option == "Abmelden":
-            self.abmelden()
+            if st.button("Raum buchen"):
+                if st.session_state.logged_in_user:
+                    # Verfügbarkeit prüfen und bei Erfolg Reservierung hinzufügen
+                    if user_db.is_room_available(selected_room, formatted_date, formatted_start_time, formatted_end_time):
+                        if user_db.add_reservation(st.session_state.logged_in_user, selected_room, formatted_date, formatted_start_time, formatted_end_time):
+                            st.success(f"Raum {selected_room} erfolgreich gebucht für {formatted_date} von {formatted_start_time} bis {formatted_end_time}.")
+                        else:
+                            st.error("Es gab ein Problem bei der Buchung des Raums.")
+                    else:
+                        st.error("Der Raum ist zu diesem Zeitpunkt nicht verfügbar.")
+                else:
+                    st.error("Sie müssen eingeloggt sein, um einen Raum zu buchen.")
+        else:
+            st.write("Für den ausgewählten Raum sind keine Verfügbarkeitsdaten vorhanden.")
+    else:
+        st.write("Keine verfügbaren Räume gefunden.")
 
-    def start(self):
-        self.handle_view()
 
-if __name__ == '__main__':
-    app = RaumBuchungApp()
-    app.start()
+
+
+def main():
+    st.title('Raumbuchungssystem')
+
+    # Anzeigen von Login- und Registrierungsoptionen im Seitenmenü
+    display_login()
+    display_registration()
+
+    # Anzeigen der Buchungsoption nur, wenn der Benutzer eingeloggt ist
+    if st.session_state['logged_in_user']:
+        display_available_rooms()
+
+if __name__ == "__main__":
+    main()
