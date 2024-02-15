@@ -14,83 +14,119 @@ DB_PATH = 'verfuegbare_raeume_db.json'
 # Initialisierung des Session State für den Anmeldestatus, falls noch nicht vorhanden
 if 'logged_in_user' not in st.session_state:
     st.session_state['logged_in_user'] = None
+if 'confirm_cancel' not in st.session_state:
+    st.session_state['confirm_cancel'] = False
+
 
 # UserDatabase-Instanz erstellen
 user_db = UserDatabase('reservation.json', 'verfuegbare_raeume_db.json')
 
 def display_login():
-    """Zeigt das Login-System an."""
-    with st.sidebar:
-        login_email = st.text_input("Email einloggen", key="login_email")
-        if st.button("Einloggen", key="login_button"):
-            if user_db.authenticate(login_email):
-                st.session_state['logged_in_user'] = login_email
-                st.sidebar.success('Anmeldung erfolgreich!')
-            else:
-                st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
+    login_email = st.sidebar.text_input("Email einloggen", key="login_email")
+    if st.sidebar.button("Einloggen", key="login_button"):
+        if user_db.authenticate(login_email):
+            st.session_state['logged_in_user'] = login_email
+            st.sidebar.success('Anmeldung erfolgreich!')
+        else:
+            st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
 
 def display_registration():
-    """Zeigt das Registrierungs-System an."""
-    with st.sidebar:
-        reg_email = st.text_input("Email registrieren", key="reg_email")
-        if st.button("Registrieren", key="register_button"):
-            registration_result = user_db.register_user(reg_email)
-            if registration_result is True:
-                st.sidebar.success('Registrierung erfolgreich!')
-            else:
-                st.sidebar.error(registration_result)
+    reg_email = st.sidebar.text_input("Email registrieren", key="reg_email")
+    if st.sidebar.button("Registrieren", key="register_button"):
+        registration_result = user_db.register_user(reg_email)
+        if registration_result is True:
+            st.sidebar.success('Registrierung erfolgreich!')
+        else:
+            st.sidebar.error(registration_result)
+
 
 def display_available_rooms():
-    db = TinyDB(DB_PATH)
-    rooms = db.all()
-    if rooms:
-        room_numbers = [room['Raumnummer'] for room in rooms]
-        selected_room = st.selectbox('Wählen Sie einen Raum', room_numbers)
+    if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
+        db = TinyDB(DB_PATH)
+        rooms = db.all()
+        if rooms:
+            room_numbers = list(set(room['Raumnummer'] for room in rooms))
+            selected_room = st.selectbox('Wählen Sie einen Raum', room_numbers)
 
-        # Anzeigen der verfügbaren Daten für den ausgewählten Raum
-        available_times = [room for room in rooms if room['Raumnummer'] == selected_room]
-        if available_times:
-            for room in available_times:
-                st.write(f"Raum {room['Raumnummer']} ist verfügbar am {room['Datum']} von {room['Verfuegbar von']} bis {room['Verfuegbar bis']}.")
+            # Anzeigen der verfügbaren Daten für den ausgewählten Raum
+            available_times = [room for room in rooms if room['Raumnummer'] == selected_room]
+            if available_times:
+                for room in available_times:
+                    st.write(f"Raum {room['Raumnummer']} ist verfügbar am {room['Datum']} von {room['Verfuegbar von']} bis {room['Verfuegbar bis']}.")
 
             date = st.date_input("Datum wählen", min_value=datetime.today())
-            start_time = st.time_input("Startzeit wählen")
-            end_time = st.time_input("Endzeit wählen")
+            start_time = st.time_input("Startzeit wählen", value=datetime.now())
+            end_time = st.time_input("Endzeit wählen", value=(datetime.now() + timedelta(hours=1)))
 
-            formatted_date = date.strftime('%A, %d.%m.%Y')
-            formatted_start_time = start_time.strftime('%H:%M')
-            formatted_end_time = end_time.strftime('%H:%M')
+            if start_time >= end_time:
+                st.error("Die Startzeit muss vor der Endzeit liegen.")
+            else:
+                formatted_date = date.strftime('%A, %d.%m.%Y')
+                formatted_start_time = start_time.strftime('%H:%M')
+                formatted_end_time = end_time.strftime('%H:%M')
 
-            if st.button("Raum buchen"):
-                if st.session_state.logged_in_user:
-                    # Verfügbarkeit prüfen und bei Erfolg Reservierung hinzufügen
-                    if user_db.is_room_available(selected_room, formatted_date, formatted_start_time, formatted_end_time):
-                        if user_db.add_reservation(st.session_state.logged_in_user, selected_room, formatted_date, formatted_start_time, formatted_end_time):
-                            st.success(f"Raum {selected_room} erfolgreich gebucht für {formatted_date} von {formatted_start_time} bis {formatted_end_time}.")
-                        else:
-                            st.error("Es gab ein Problem bei der Buchung des Raums.")
+                if st.button("Raum buchen"):
+                    success, message = user_db.add_reservation(st.session_state['logged_in_user'], selected_room, formatted_date, formatted_start_time, formatted_end_time)
+                    if success:
+                        st.success("Reservierung erfolgreich hinzugefügt.")
                     else:
-                        st.error("Der Raum ist zu diesem Zeitpunkt nicht verfügbar.")
-                else:
-                    st.error("Sie müssen eingeloggt sein, um einen Raum zu buchen.")
+                        st.error(message)
         else:
-            st.write("Für den ausgewählten Raum sind keine Verfügbarkeitsdaten vorhanden.")
+            st.write("Keine verfügbaren Räume gefunden.")
     else:
-        st.write("Keine verfügbaren Räume gefunden.")
+        st.error("Bitte einloggen, um das Buchungssystem zu nutzen.")
+
+
+
+def display_user_reservations():
+    if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
+        user_email = st.session_state['logged_in_user']
+        user_reservations = user_db.get_user_reservations(user_email)
+
+        if user_reservations:
+            for reservation in user_reservations:
+                doc_id = reservation.doc_id  # Zugriff auf die doc_id des aktuellen Dokuments
+                st.write(f"Reservierung für Raum {reservation['room_number']} am {reservation['date']} von {reservation['start_time']} bis {reservation['end_time']}")
+                if st.button(f"Stornieren {doc_id}", key=f"cancel-{doc_id}"):
+                    if 'confirm_cancel' not in st.session_state:
+                        st.session_state['confirm_cancel'] = False
+                    st.session_state['confirm_cancel'] = doc_id  # Speichere die doc_id für die Bestätigung
+
+            # Bestätigungsdialog für Stornierung anzeigen, wenn notwendig
+            if st.session_state['confirm_cancel']:
+                if st.button("Ja, stornieren", key=f"confirm-cancel-{st.session_state['confirm_cancel']}"):
+                    user_db.cancel_reservation(st.session_state['confirm_cancel'])
+                    st.success("Reservierung wurde erfolgreich storniert.")
+                    del st.session_state['confirm_cancel']  # Zurücksetzen
+                    st.experimental_rerun()
+                elif st.button("Nein", key=f"deny-cancel-{st.session_state['confirm_cancel']}"):
+                    del st.session_state['confirm_cancel']  # Zurücksetzen
+        else:
+            st.write("Sie haben keine aktiven Reservierungen.")
+    
+
+
+
+
 
 
 
 
 def main():
     st.title('Raumbuchungssystem')
-
-    # Anzeigen von Login- und Registrierungsoptionen im Seitenmenü
     display_login()
     display_registration()
 
-    # Anzeigen der Buchungsoption nur, wenn der Benutzer eingeloggt ist
+    menu_options = ["Bitte wählen"]
     if st.session_state['logged_in_user']:
+        menu_options += ["Buchungssystem", "Meine Reservierungen"]
+
+    selected_option = st.sidebar.selectbox("Menü", menu_options)
+
+    if selected_option == "Buchungssystem":
         display_available_rooms()
+    elif selected_option == "Meine Reservierungen":
+        display_user_reservations()
 
 if __name__ == "__main__":
     main()
