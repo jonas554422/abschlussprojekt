@@ -7,3 +7,5 @@ pip install tinydb
 pip install beautifulsoup4
 pip install streamlit
 3. Passwort in data_mci eingeben
+
+
