@@ -6,6 +6,7 @@ pip install webdriver_manager
 pip install tinydb
 pip install beautifulsoup4
 pip install streamlit
+pip install pandas
 3. Passwort in data_mci eingeben
 
 
