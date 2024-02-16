@@ -42,6 +42,11 @@ class UserDatabase:
             if date_obj == avail_date_obj and start_time_obj >= avail_start_time_obj and end_time_obj <= avail_end_time_obj:
                 return True
         return False
+    
+    def get_reservations_for_room(self, room_number):
+        """Gibt alle Reservierungen für einen bestimmten Raum zurück."""
+        reservations = self.reservation_table.search(Query().room_number == room_number)
+        return reservations
 
     def add_reservation(self, email, room_number, date, start_time, end_time):
         if not self.is_room_available(room_number, date, start_time, end_time):
@@ -63,9 +68,26 @@ class UserDatabase:
             'end_time': end_time
         })
         return True, "Reservierung erfolgreich hinzugefügt."
+    
+    def get_all_reservations(self):
+        """Holt alle Reservierungen aus der Datenbank und fügt die doc_id hinzu."""
+        reservations = self.reservation_table.all()
+        # Aktualisiere jede Reservierung, um die doc_id einzuschließen
+        for reservation in reservations:
+            reservation['doc_id'] = reservation.doc_id  # Zugriff auf die interne doc_id von TinyDB
+        return reservations  # Gib die aktualisierten Reservierungen zurück
+
 
     def get_user_reservations(self, email):
         return self.reservation_table.search(Query().email == email)
+    
+    def check_existing_reservation(self, room_number, date, start_time):
+        reservations = self.get_reservations_for_room(room_number)
+        for reservation in reservations:
+            if (reservation['date'] == date and
+                reservation['start_time'] <= start_time <= reservation['end_time']):
+                return True
+        return False
     
     def cancel_reservation(self, reservation_id):
         # Finde die Reservierung anhand ihrer ID
@@ -78,10 +100,14 @@ class UserDatabase:
                 'date': reservation['date'],
                 'start_time': reservation['start_time'],
                 'end_time': reservation['end_time'],
-                'storno_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                'storno_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'message': 'Ihre Buchung wurde storniert.'  # Nachricht über die Stornierung
             })
             # Lösche die Reservierung
             self.reservation_table.remove(doc_ids=[reservation_id])
+
+
+
 
 
     def verify_reservations(self, email):
