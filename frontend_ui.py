@@ -109,16 +109,30 @@ def display_user_reservations():
 def display_mci_daten_aktualisierung():
     st.sidebar.title("MCI-Datenaktualisierung")
     if st.sidebar.button("Daten aktualisieren"):
-        #Platzhalter
-        place_holder = st.empty()
-        place_holder.text("Bitte warten Sie kurz, die Daten aktualisieren gerade.")
-        erfolg, nachricht = aktualisiere_mci_daten()
-        if erfolg:
-            place_holder.empty()
-            st.sidebar.success(nachricht)
+        with st.spinner("Bitte warten Sie, die Daten werden aktualisiert..."):
+            erfolg, nachricht = aktualisiere_mci_daten()
+            if erfolg:
+                st.success(nachricht)
+                # Aufruf der Verifizierungsmethode, um die Reservierungen zu überprüfen
+                if 'logged_in_user' in st.session_state:
+                    user_db.verify_reservations(st.session_state['logged_in_user'])
+            else:
+                st.error(nachricht)
+
+def display_storno_entries():
+    user_db = UserDatabase()
+    if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
+        user_email = st.session_state['logged_in_user']
+        storno_entries = user_db.storno_table.search(Query().email == user_email)
+
+        if storno_entries:
+            st.write("Stornierte Reservierungen:")
+            for entry in storno_entries:
+                st.write(f"Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde am {entry['storno_time']} storniert.")
         else:
-            place_holder.empty()
-            st.sidebar.error(nachricht)
+            st.write("Keine stornierten Reservierungen vorhanden.")
+
+
 
 def main():
     st.title('Raumbuchungssystem')
@@ -128,7 +142,7 @@ def main():
     # Füge den neuen Menüpunkt hinzu
     menu_options = ["Bitte wählen"]
     if st.session_state.get('logged_in_user'):
-        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung"]
+        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen"]
 
     selected_option = st.sidebar.selectbox("Menü", menu_options)
 
@@ -138,6 +152,8 @@ def main():
         display_user_reservations()
     elif selected_option == "MCI-Datenaktualisierung":
         display_mci_daten_aktualisierung()
+    elif selected_option == "Stornierte Reservierungen":
+        display_storno_entries()
 
 if __name__ == "__main__":
     main()
