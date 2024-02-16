@@ -3,6 +3,7 @@ from tinydb import TinyDB, Query
 from datetime import datetime, timedelta
 import locale
 from backend import UserDatabase
+from refresh_mci import aktualisiere_mci_daten
 
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
 # Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
@@ -105,19 +106,29 @@ def display_user_reservations():
             st.write("Sie haben keine aktiven Reservierungen.")
     
 
-
-
-
-
+def display_mci_daten_aktualisierung():
+    st.sidebar.title("MCI-Datenaktualisierung")
+    if st.sidebar.button("Daten aktualisieren"):
+        #Platzhalter
+        place_holder = st.empty()
+        place_holder.text("Bitte warten Sie kurz, die Daten aktualisieren gerade.")
+        erfolg, nachricht = aktualisiere_mci_daten()
+        if erfolg:
+            place_holder.empty()
+            st.sidebar.success(nachricht)
+        else:
+            place_holder.empty()
+            st.sidebar.error(nachricht)
 
 def main():
     st.title('Raumbuchungssystem')
     display_login()
     display_registration()
 
+    # Füge den neuen Menüpunkt hinzu
     menu_options = ["Bitte wählen"]
-    if st.session_state['logged_in_user']:
-        menu_options += ["Buchungssystem", "Meine Reservierungen"]
+    if st.session_state.get('logged_in_user'):
+        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung"]
 
     selected_option = st.sidebar.selectbox("Menü", menu_options)
 
@@ -125,6 +136,8 @@ def main():
         display_available_rooms()
     elif selected_option == "Meine Reservierungen":
         display_user_reservations()
+    elif selected_option == "MCI-Datenaktualisierung":
+        display_mci_daten_aktualisierung()
 
 if __name__ == "__main__":
     main()
