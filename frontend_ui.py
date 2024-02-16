@@ -7,7 +7,20 @@ from refresh_mci import aktualisiere_mci_daten
 
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
 # Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
-locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
+#locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
+
+def set_supported_locale():
+    locales_to_try = ['en_US.UTF-8', 'en_US.utf8', 'English_United States.1252', 'en_US']
+    for loc in locales_to_try:
+        try:
+            locale.setlocale(locale.LC_TIME, loc)
+            print(f"Locale erfolgreich auf {loc} gesetzt.")
+            return  # Erfolg, breche die Schleife ab
+        except locale.Error:
+            continue  # Bei Misserfolg, versuche die nächste Locale
+    print("Warnung: Keine der Locales konnte gesetzt werden.")
+
+set_supported_locale()
 
 # Pfad zur Datenbank für verfügbare Räume
 DB_PATH = 'verfuegbare_raeume_db.json'
