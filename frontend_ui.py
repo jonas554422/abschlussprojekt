@@ -110,8 +110,6 @@ def display_user_reservations():
 
 
 
-
-
 def main():
     st.title('Raumbuchungssystem')
     display_login()
