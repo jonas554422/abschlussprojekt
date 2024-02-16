@@ -27,7 +27,7 @@ class UserDatabase:
         return self.db.contains(Query().email == email)
 
     def is_room_available(self, room_number, date, start_time, end_time):
-        date_format = "%Y-%m-%d"
+        date_format = "%A, %d.%m.%Y"
         time_format = "%H:%M"
         date_obj = datetime.strptime(date, date_format)
         start_time_obj = datetime.strptime(start_time, time_format).time()
@@ -46,6 +46,14 @@ class UserDatabase:
     def add_reservation(self, email, room_number, date, start_time, end_time):
         if not self.is_room_available(room_number, date, start_time, end_time):
             return False, "Raum ist zu diesem Zeitpunkt nicht verfügbar."
+        # Überprüfe, ob die Reservierung bereits existiert
+        existing_reservations = self.reservation_table.search((Query().room_number == room_number) & 
+                                                           (Query().date == date) & 
+                                                           ((Query().start_time < end_time) & (Query().end_time > start_time)))
+        if existing_reservations:
+            return False, "Raum ist zu diesem Zeitpunkt bereits reserviert."
+
+        
 
         self.reservation_table.insert({
             'email': email,
@@ -92,6 +100,6 @@ class UserDatabase:
 
 if __name__ == "__main__":
     db = UserDatabase()
-    # Beispielhafter Test
-    email = "test@example.com"
+    #  Test
+    email = "mj5804@mci4me.at"
     db.verify_reservations(email)
