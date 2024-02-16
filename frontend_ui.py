@@ -2,6 +2,7 @@ import streamlit as st
 from tinydb import TinyDB, Query
 from datetime import datetime, timedelta
 import locale
+import pandas as pd
 from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
 
@@ -37,12 +38,17 @@ user_db = UserDatabase('reservation.json', 'verfuegbare_raeume_db.json')
 
 def display_login():
     login_email = st.sidebar.text_input("Email einloggen", key="login_email")
+
     if st.sidebar.button("Einloggen", key="login_button"):
         if user_db.authenticate(login_email):
             st.session_state['logged_in_user'] = login_email
             st.sidebar.success('Anmeldung erfolgreich!')
+            # Aufruf von display_storno_notifications() mit der E-Mail des angemeldeten Benutzers
+            display_storno_notifications(login_email)  # Zeige Stornierungsnachrichten, falls vorhanden
+            st.experimental_rerun()
         else:
             st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
+
 
 def display_registration():
     reg_email = st.sidebar.text_input("Email registrieren", key="reg_email")
@@ -54,6 +60,51 @@ def display_registration():
             st.sidebar.error(registration_result)
 
 
+def calculate_availability(available_times, reservations):
+    new_availability = []
+
+    for slot in available_times:
+        slot_start = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar von']}", '%A, %d.%m.%Y %H:%M')
+        slot_end = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar bis']}", '%A, %d.%m.%Y %H:%M')
+
+        # Filtere Reservierungen für das Datum des aktuellen Slots
+        daily_reservations = [r for r in reservations if r['date'] == slot['Datum']]
+
+        # Sortiere Reservierungen nach Startzeit
+        daily_reservations.sort(key=lambda r: r['start_time'])
+
+        # Füge den Slot-Start als Anfangspunkt hinzu
+        time_points = [slot_start]
+
+        for reservation in daily_reservations:
+            res_start = datetime.strptime(f"{reservation['date']} {reservation['start_time']}", '%A, %d.%m.%Y %H:%M')
+            res_end = datetime.strptime(f"{reservation['date']} {reservation['end_time']}", '%A, %d.%m.%Y %H:%M')
+
+            # Überprüfe, ob die Reservierung innerhalb des Slots liegt und füge Start-/Endzeit zur Liste hinzu
+            if res_start >= slot_start and res_end <= slot_end:
+                time_points.append(res_start)
+                time_points.append(res_end)
+
+        # Füge den Slot-End als Endpunkt hinzu
+        time_points.append(slot_end)
+
+        # Erzeuge verfügbare Intervalle basierend auf den Zeitpunkten
+        for i in range(0, len(time_points), 2):
+            if i+1 < len(time_points):
+                start = time_points[i]
+                end = time_points[i+1]
+                # Überspringe, wenn Start und End identisch sind
+                if start != end:
+                    new_availability.append({
+                        'Datum': start.strftime('%A, %d.%m.%Y'),
+                        'Verfuegbar von': start.strftime('%H:%M'),
+                        'Verfuegbar bis': end.strftime('%H:%M')
+                    })
+
+    return new_availability
+
+
+
 def display_available_rooms():
     if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
         db = TinyDB(DB_PATH)
@@ -62,11 +113,24 @@ def display_available_rooms():
             room_numbers = list(set(room['Raumnummer'] for room in rooms))
             selected_room = st.selectbox('Wählen Sie einen Raum', room_numbers)
 
-            # Anzeigen der verfügbaren Daten für den ausgewählten Raum
-            available_times = [room for room in rooms if room['Raumnummer'] == selected_room]
+            # Erstelle eine Liste für die verfügbaren Zeiten des ausgewählten Raums
+            available_times_list = [room for room in rooms if room['Raumnummer'] == selected_room]
+
+            # Hole alle Reservierungen für den ausgewählten Raum
+            reservations = user_db.get_reservations_for_room(selected_room)
+
+            # Berechne die verfügbaren Zeitslots basierend auf den Reservierungen
+            available_times = calculate_availability(available_times_list, reservations)
+
+            # Erstelle ein DataFrame für die berechneten verfügbaren Zeiten
             if available_times:
-                for room in available_times:
-                    st.write(f"Raum {room['Raumnummer']} ist verfügbar am {room['Datum']} von {room['Verfuegbar von']} bis {room['Verfuegbar bis']}.")
+                available_times_df = pd.DataFrame(available_times)
+                available_times_df['Datum'] = pd.to_datetime(available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
+                available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
+
+                # Zeige die Verfügbarkeit als Tabelle an
+                table_placeholder = st.empty()
+                table_placeholder.dataframe(available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
 
             date = st.date_input("Datum wählen", min_value=datetime.today())
             start_time = st.time_input("Startzeit wählen", value=datetime.now())
@@ -80,11 +144,19 @@ def display_available_rooms():
                 formatted_end_time = end_time.strftime('%H:%M')
 
                 if st.button("Raum buchen"):
-                    success, message = user_db.add_reservation(st.session_state['logged_in_user'], selected_room, formatted_date, formatted_start_time, formatted_end_time)
-                    if success:
-                        st.success("Reservierung erfolgreich hinzugefügt.")
-                    else:
-                        st.error(message)
+                    if admin_book_room(selected_room, formatted_date, formatted_start_time, formatted_end_time):
+                        # Aktualisiere die verfügbaren Zeiten nach erfolgreicher Buchung
+                        updated_reservations = user_db.get_reservations_for_room(selected_room)
+                        updated_available_times = calculate_availability(available_times_list, updated_reservations)
+
+                        # Aktualisiere das DataFrame für die neuen verfügbaren Zeiten
+                        if updated_available_times:
+                            updated_available_times_df = pd.DataFrame(updated_available_times)
+                            updated_available_times_df['Datum'] = pd.to_datetime(updated_available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
+                            updated_available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
+                            
+                            # Aktualisiere die vorhandene Tabelle mit den neuen verfügbaren Zeiten
+                            table_placeholder.dataframe(updated_available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
         else:
             st.write("Keine verfügbaren Räume gefunden.")
     else:
@@ -145,20 +217,157 @@ def display_storno_entries():
         else:
             st.write("Keine stornierten Reservierungen vorhanden.")
 
+def display_storno_notifications(user_email):
+    storno_entries = user_db.storno_table.search(Query().email == user_email)
+    for entry in storno_entries:
+        st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {entry['message']}")
+        # Optional: Entfernen der angezeigten Stornierungsnachricht aus der Datenbank, falls gewünscht
+        # user_db.storno_table.remove(doc_ids=[entry.doc_id])
+        if not st.session_state['confirm_cancel']:  # Überprüfen, ob das E-Mail-Eingabefeld für Stornierungsnachrichten angezeigt wird
+            # Überprüfen, ob der Benutzer nicht eingeloggt ist, um den "Einloggen (Storno)"-Button zu vermeiden
+            if not st.session_state.get('logged_in_user'):
+                if st.sidebar.button("Einloggen (Storno)", key="login_button_storno"):
+                    if user_db.authenticate(login_email):
+                        st.session_state['logged_in_user'] = login_email
+                        st.sidebar.success('Anmeldung erfolgreich!')
+                        # Rufe hier die Funktion auf, nachdem der Benutzer erfolgreich angemeldet wurde
+                        display_storno_notifications(login_email)
+                        st.experimental_rerun()
+                    else:
+                        st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
+
+
+ADMIN_SECRET_CODE = "123"  # Das spezielle Kennwort für den Admin-Zugang
+
+def check_for_admin_code(input_code):
+    if input_code == ADMIN_SECRET_CODE:
+        st.session_state['is_admin'] = True
+        st.experimental_rerun()
+    else:
+        st.session_state['is_admin'] = False
+
+def display_admin_input():
+    with st.expander("Admin-Zugang"):
+        admin_code = st.text_input("Admin Code eingeben", key="admin_code", type="password")
+        if st.button("Admin-Zugang bestätigen"):
+            check_for_admin_code(admin_code)
+
+
+def display_login_and_registration():
+    login_email = st.sidebar.text_input("Email einloggen", key="login_email")
+    if st.sidebar.button("Einloggen", key="login_button"):
+        if user_db.authenticate(login_email):
+            st.session_state['logged_in_user'] = login_email
+            # Wenn die Authentifizierung erfolgreich ist, nehmen wir an, dass der Benutzer registriert ist.
+            st.session_state['is_registered'] = True
+            st.sidebar.success('Anmeldung erfolgreich!')
+            st.experimental_rerun()
+        else:
+            st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
+
+    # Überprüfen, ob der Benutzer nicht als Admin angemeldet ist und ob der Anmeldestatus nicht auf 'True' gesetzt ist,
+    # was darauf hindeutet, dass der Benutzer bereits registriert ist.
+    if not st.session_state.get('is_admin') and not st.session_state.get('logged_in_user'):
+        reg_email = st.sidebar.text_input("Email registrieren", key="reg_email")
+        if st.sidebar.button("Registrieren", key="register_button"):
+            registration_result = user_db.register_user(reg_email)
+            if registration_result == True:
+                st.session_state['is_registered'] = True
+                st.sidebar.success('Registrierung erfolgreich!')
+            else:
+                st.sidebar.error(registration_result)
+
+# Stellen Sie sicher, dass diese Zeile am Anfang des main()-Funktionskörpers steht, 
+# um den initialen Status von 'is_registered' festzulegen.
+if 'is_registered' not in st.session_state:
+    st.session_state['is_registered'] = False
+
+
+def display_admin_interface():
+    st.write("Admin-Bereich: Verwaltung der Buchungen")
+    reservations = user_db.get_all_reservations()
+
+    if reservations:
+        # Konvertieren Sie die Reservierungen in ein DataFrame
+        df_reservations = pd.DataFrame(reservations)
+
+        # Überprüfen Sie, ob die 'doc_id' vorhanden ist
+        if 'doc_id' not in df_reservations.columns:
+            st.error("Fehler: Keine doc_id in den Reservierungsdaten gefunden.")
+            return
+
+        # Erstelle eine Spalte für Stornierungsbuttons
+        df_reservations['Aktion'] = df_reservations.apply(lambda row: f"Stornieren {row['doc_id']}", axis=1)
+
+        # Zeige das DataFrame an, ohne die 'Aktion'-Spalte, da Streamlit keine Buttons direkt in DataFrames unterstützt
+        st.dataframe(df_reservations[['email', 'room_number', 'date', 'start_time', 'end_time']], height=600)
+
+        # Für jede Reservierung, generiere einen Stornieren-Button basierend auf der 'doc_id'
+        for index, row in df_reservations.iterrows():
+            if st.button(f"Stornieren {row['doc_id']}", key=f"cancel-{row['doc_id']}"):
+                # Führe die Stornierung durch und zeige eine Bestätigungsnachricht an
+                user_db.cancel_reservation(row['doc_id'])
+                st.success(f"Reservierung {row['doc_id']} storniert.")
+                # Optional: Nachricht an den Benutzer senden, dass seine Reservierung storniert wurde
+                user_db.notify_user_of_cancellation(row['email'], row['room_number'], row['date'])
+                st.experimental_rerun()  # Seite neu laden, um die Änderungen zu reflektieren
+    else:
+        st.write("Keine Reservierungen vorhanden.")
+
+def admin_book_room(room_number, date, start_time, end_time):
+    existing_reservations = user_db.get_reservations_for_room(room_number)
+    
+    # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
+    for reservation in existing_reservations:
+        if reservation['date'] == date and reservation['start_time'] == start_time:
+            # Storniere die vorhandene Buchung
+            user_db.cancel_reservation(reservation.doc_id)
+            # Füge die neue Buchung hinzu
+            success, message = user_db.add_reservation('admin', room_number, date, start_time, end_time)
+            if success:
+                st.success("Die Buchung wurde erfolgreich aktualisiert.")
+                return True
+            else:
+                st.error(f"Fehler beim Aktualisieren der Buchung: {message}")
+                return False
+
+    # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
+    success, message = user_db.add_reservation('admin', room_number, date, start_time, end_time)
+    if success:
+        st.success("Buchung erfolgreich hinzugefügt.")
+        return True
+    else:
+        st.error(f"Fehler beim Hinzufügen der Buchung: {message}")
+        return False
+
+
+
 
 
 def main():
     st.title('Raumbuchungssystem')
-    display_login()
-    display_registration()
 
-    # Füge den neuen Menüpunkt hinzu
+    # Initialisiere den Zustand 'is_registered', falls noch nicht geschehen.
+    if 'is_registered' not in st.session_state:
+        st.session_state['is_registered'] = False
+
+    display_admin_input()  # Überprüft den Admin-Code und setzt den Admin-Status
+
+    display_login_and_registration()  # Zeigt Anmelde- und Registrierungsfelder an, abhängig vom Admin-Status
+
+    user_email = st.session_state.get('logged_in_user')
+
+    display_storno_notifications(user_email)  # Zeige Stornierungsnachrichten an, falls vorhanden
+
+    # Definiere die Menüoptionen abhängig vom Anmeldestatus des Benutzers oder ob es sich um einen Admin handelt
     menu_options = ["Bitte wählen"]
-    if st.session_state.get('logged_in_user'):
+    if st.session_state.get('logged_in_user') or st.session_state.get('is_admin'):
         menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen"]
 
-    selected_option = st.sidebar.selectbox("Menü", menu_options)
+    # Lasse den Benutzer das Menü auswählen
+    selected_option = st.sidebar.selectbox("Menü", menu_options, index=0)
 
+    # Führe Funktionen basierend auf dem ausgewählten Menüpunkt und dem Anmeldestatus aus
     if selected_option == "Buchungssystem":
         display_available_rooms()
     elif selected_option == "Meine Reservierungen":
@@ -167,6 +376,10 @@ def main():
         display_mci_daten_aktualisierung()
     elif selected_option == "Stornierte Reservierungen":
         display_storno_entries()
+
+    # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
+    if st.session_state.get('is_admin'):
+        display_admin_interface()
 
 if __name__ == "__main__":
     main()
