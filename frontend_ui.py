@@ -220,7 +220,9 @@ def display_storno_entries():
 def display_storno_notifications(user_email):
     storno_entries = user_db.storno_table.search(Query().email == user_email)
     for entry in storno_entries:
-        st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {entry['message']}")
+        # Verwende die .get()-Methode mit einem Standardwert, um KeyError zu vermeiden
+        message = entry.get('message', 'Keine zusätzliche Nachricht vorhanden.')
+        st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {message}")
         # Optional: Entfernen der angezeigten Stornierungsnachricht aus der Datenbank, falls gewünscht
         # user_db.storno_table.remove(doc_ids=[entry.doc_id])
         if not st.session_state['confirm_cancel']:  # Überprüfen, ob das E-Mail-Eingabefeld für Stornierungsnachrichten angezeigt wird
@@ -235,6 +237,7 @@ def display_storno_notifications(user_email):
                         st.experimental_rerun()
                     else:
                         st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
+
 
 
 ADMIN_SECRET_CODE = "123"  # Das spezielle Kennwort für den Admin-Zugang
