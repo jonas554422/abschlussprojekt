@@ -2,6 +2,8 @@ import re
 from tinydb import TinyDB, Query
 from datetime import datetime
 from refresh_mci import aktualisiere_mci_daten
+import locale
+
 
 class UserDatabase:
     def __init__(self, db_path='reservation.json', available_rooms_path='verfuegbare_raeume_db.json'):
@@ -25,6 +27,7 @@ class UserDatabase:
 
     def authenticate(self, email):
         return self.db.contains(Query().email == email)
+    
 
     def is_room_available(self, room_number, date, start_time, end_time):
         date_format = "%A, %d.%m.%Y"
@@ -76,7 +79,44 @@ class UserDatabase:
         for reservation in reservations:
             reservation['doc_id'] = reservation.doc_id  # Zugriff auf die interne doc_id von TinyDB
         return reservations  # Gib die aktualisierten Reservierungen zurück
+    
+    
 
+    def admin_book_room(self, room_number, date, start_time, end_time):
+        existing_reservations = self.get_reservations_for_room(room_number)
+    
+        # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
+        for reservation in existing_reservations:
+            if reservation['date'] == date and reservation['start_time'] == start_time:
+                # Storniere die vorhandene Buchung
+                self.cancel_reservation(reservation.doc_id)
+                # Füge die neue Buchung hinzu
+                success, message = self.add_reservation('admin', room_number, date, start_time, end_time)
+                if success:
+                    return True, "Die Buchung wurde erfolgreich aktualisiert."
+                else:
+                    return False, f"Fehler beim Aktualisieren der Buchung: {message}"
+
+        # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
+        success, message = self.add_reservation('admin', room_number, date, start_time, end_time)
+        if success:
+            return True, "Buchung erfolgreich hinzugefügt."
+        else:
+            return False, f"Fehler beim Hinzufügen der Buchung: {message}"
+        
+        
+    def set_supported_locale():
+        locales_to_try = ['en_US.UTF-8', 'en_US.utf8', 'English_United States.1252', 'en_US']
+        for loc in locales_to_try:
+            try:
+                locale.setlocale(locale.LC_TIME, loc)
+                print(f"Locale erfolgreich auf {loc} gesetzt.")
+                return  # Erfolg, breche die Schleife ab
+            except locale.Error:
+                continue  # Bei Misserfolg, versuche die nächste Locale
+        print("Warnung: Keine der Locales konnte gesetzt werden.")
+
+    set_supported_locale()
 
     def get_user_reservations(self, email):
         return self.reservation_table.search(Query().email == email)
@@ -106,7 +146,39 @@ class UserDatabase:
             # Lösche die Reservierung
             self.reservation_table.remove(doc_ids=[reservation_id])
 
+    def calculate_availability(self, available_times, reservations):
+        new_availability = []
 
+        for slot in available_times:
+            slot_start = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar von']}", '%A, %d.%m.%Y %H:%M')
+            slot_end = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar bis']}", '%A, %d.%m.%Y %H:%M')
+
+            daily_reservations = [r for r in reservations if r['date'] == slot['Datum']]
+            daily_reservations.sort(key=lambda r: r['start_time'])
+
+            time_points = [slot_start]
+            for reservation in daily_reservations:
+                res_start = datetime.strptime(f"{reservation['date']} {reservation['start_time']}", '%A, %d.%m.%Y %H:%M')
+                res_end = datetime.strptime(f"{reservation['date']} {reservation['end_time']}", '%A, %d.%m.%Y %H:%M')
+
+                if res_start >= slot_start and res_end <= slot_end:
+                    time_points.append(res_start)
+                    time_points.append(res_end)
+
+            time_points.append(slot_end)
+
+            for i in range(0, len(time_points), 2):
+                if i+1 < len(time_points):
+                    start = time_points[i]
+                    end = time_points[i+1]
+                    if start != end:
+                        new_availability.append({
+                            'Datum': start.strftime('%A, %d.%m.%Y'),
+                            'Verfuegbar von': start.strftime('%H:%M'),
+                            'Verfuegbar bis': end.strftime('%H:%M')
+                        })
+
+        return new_availability
 
 
 
