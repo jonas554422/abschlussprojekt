@@ -167,18 +167,22 @@ def user_logged_in():
     # Speichere den aktuellen Zeitpunkt als letzten Anmeldezeitpunkt
     st.session_state['last_login_time'] = datetime.datetime.now()
 
-# Funktion zum Anzeigen von Stornierungsnachrichten innerhalb von 10 Sekunden nach der Anmeldung
-def display_storno_notifications(user_email):
-    if 'last_login_time' in st.session_state:
-        # Berechne, wie viel Zeit seit der letzten Anmeldung vergangen ist
+# Funktion zum Anzeigen von Stornierungsnachrichten, zeigt Nachrichten nur einmal nach der Anmeldung an
+def display_storno_notifications(user_db, user_email):
+    # Prüfe, ob seit der letzten Anmeldung genügend Zeit vergangen ist und ob Stornierungsnachrichten bereits angezeigt wurden
+    if 'last_login_time' in st.session_state and not st.session_state.get('storno_shown', False):
         time_since_login = datetime.datetime.now() - st.session_state['last_login_time']
-        # Zeige Nachrichten nur an, wenn weniger als 10 Sekunden vergangen sind
         if time_since_login.total_seconds() <= 10:
             storno_entries = user_db.storno_table.search(Query().email == user_email)
-            for entry in storno_entries:
-                message = entry.get('message', 'Keine zusätzliche Nachricht vorhanden.')
-                st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {message}")
-                # Beachte: Nach 10 Sekunden werden keine neuen Nachrichten mehr angezeigt, bereits angezeigte bleiben jedoch sichtbar.
+            if storno_entries:
+                for entry in storno_entries:
+                    message = entry.get('message', 'Keine zusätzliche Nachricht vorhanden.')
+                    st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {message}")
+                # Markiere, dass Stornierungsnachrichten angezeigt wurden
+                st.session_state['storno_shown'] = True
+
+
+
 
 
 
@@ -283,7 +287,7 @@ def main():
 
     user_email = st.session_state.get('logged_in_user')
 
-    display_storno_notifications(user_email)  # Zeige Stornierungsnachrichten an, falls vorhanden
+    display_storno_notifications(user_db, user_email)   # Zeige Stornierungsnachrichten an, falls vorhanden
 
     # Definiere die Menüoptionen abhängig vom Anmeldestatus des Benutzers oder ob es sich um einen Admin handelt
     menu_options = ["Bitte wählen"]
