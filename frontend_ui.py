@@ -145,6 +145,11 @@ def display_storno_entries():
         else:
             st.write("Keine stornierten Reservierungen vorhanden.")
 
+def display_stats():
+    if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
+        st.write('Statistik')
+
+
 
 
 def main():
@@ -155,7 +160,7 @@ def main():
     # Füge den neuen Menüpunkt hinzu
     menu_options = ["Bitte wählen"]
     if st.session_state.get('logged_in_user'):
-        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen"]
+        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Statistik"]
 
     selected_option = st.sidebar.selectbox("Menü", menu_options)
 
@@ -167,6 +172,8 @@ def main():
         display_mci_daten_aktualisierung()
     elif selected_option == "Stornierte Reservierungen":
         display_storno_entries()
+    elif selected_option == "Statistik":
+        display_stats()
 
 if __name__ == "__main__":
     main()
