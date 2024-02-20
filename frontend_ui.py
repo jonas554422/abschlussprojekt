@@ -6,7 +6,6 @@ import pandas as pd
 from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
 
-
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
 # Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
 #locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
@@ -58,22 +57,14 @@ def display_available_rooms():
             room_numbers = list(set(room['Raumnummer'] for room in rooms))
             selected_room = st.selectbox('Wählen Sie einen Raum', room_numbers)
 
-            # Erstelle eine Liste für die verfügbaren Zeiten des ausgewählten Raums
             available_times_list = [room for room in rooms if room['Raumnummer'] == selected_room]
-
-            # Hole alle Reservierungen für den ausgewählten Raum
             reservations = user_db.get_reservations_for_room(selected_room)
-
-            # Berechne die verfügbaren Zeitslots basierend auf den Reservierungen
             available_times = user_db.calculate_availability(available_times_list, reservations)
 
-            # Erstelle ein DataFrame für die berechneten verfügbaren Zeiten
             if available_times:
                 available_times_df = pd.DataFrame(available_times)
                 available_times_df['Datum'] = pd.to_datetime(available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
                 available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
-
-                # Zeige die Verfügbarkeit als Tabelle an
                 table_placeholder = st.empty()
                 table_placeholder.dataframe(available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
 
@@ -89,21 +80,19 @@ def display_available_rooms():
             formatted_start_time = start_time.strftime('%H:%M')
             formatted_end_time = end_time.strftime('%H:%M')
 
-            # Korrigiere den Aufruf von admin_book_room über die user_db Instanz
+            # Ermitteln Sie die Email des aktuellen Benutzers oder verwenden 'admin' als Fallback
+            user_email = st.session_state.get('logged_in_user', 'admin')
+
             if st.button("Raum buchen"):
-                success, message = user_db.admin_book_room(selected_room, formatted_date, formatted_start_time, formatted_end_time)
+                # Pass user_email to the admin_book_room function
+                success, message = user_db.admin_book_room(selected_room, formatted_date, formatted_start_time, formatted_end_time, user_email)
                 if success:
-                    # Aktualisiere die verfügbaren Zeiten nach erfolgreicher Buchung
                     updated_reservations = user_db.get_reservations_for_room(selected_room)
                     updated_available_times = user_db.calculate_availability(available_times_list, updated_reservations)
-
-                    # Aktualisiere das DataFrame für die neuen verfügbaren Zeiten
                     if updated_available_times:
                         updated_available_times_df = pd.DataFrame(updated_available_times)
                         updated_available_times_df['Datum'] = pd.to_datetime(updated_available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
                         updated_available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
-
-                        # Aktualisiere die vorhandene Tabelle mit den neuen verfügbaren Zeiten
                         table_placeholder.dataframe(updated_available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
                     st.success("Raum erfolgreich gebucht.")
                 else:
@@ -112,6 +101,7 @@ def display_available_rooms():
             st.write("Keine verfügbaren Räume gefunden.")
     else:
         st.error("Bitte einloggen, um das Buchungssystem zu nutzen.")
+
 
 
 
@@ -172,25 +162,23 @@ def display_storno_entries():
             st.write("Keine stornierten Reservierungen vorhanden.")
 
 
-# Angenommen, diese Funktion wird aufgerufen, wenn sich der Benutzer erfolgreich anmeldet
+# Funktion zum Setzen des Anmeldezeitpunkts
 def user_logged_in():
+    # Speichere den aktuellen Zeitpunkt als letzten Anmeldezeitpunkt
     st.session_state['last_login_time'] = datetime.datetime.now()
 
-
-# Funktion zum Anzeigen von Stornierungsnachrichten, begrenzt auf 15 Sekunden nach der Anmeldung
+# Funktion zum Anzeigen von Stornierungsnachrichten innerhalb von 10 Sekunden nach der Anmeldung
 def display_storno_notifications(user_email):
-    # Prüfen, ob 'last_login_time' im session_state existiert und berechnen, wie viel Zeit seitdem vergangen ist
     if 'last_login_time' in st.session_state:
-        elapsed_time = datetime.datetime.now() - st.session_state['last_login_time']
-        if elapsed_time.total_seconds() > 10:
-            return  # Wenn mehr als 15 Sekunden vergangen sind, zeige keine Stornierungsnachrichten
-
-    storno_entries = user_db.storno_table.search(Query().email == user_email)
-    for entry in storno_entries:
-        message = entry.get('message', 'Keine zusätzliche Nachricht vorhanden.')
-        st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {message}")
-        # Beachte: Die Nachrichten werden nicht automatisch nach 15 Sekunden entfernt,
-        # sie werden nur nicht mehr angezeigt, wenn diese Funktion mehr als 15 Sekunden nach der Anmeldung aufgerufen wird.
+        # Berechne, wie viel Zeit seit der letzten Anmeldung vergangen ist
+        time_since_login = datetime.datetime.now() - st.session_state['last_login_time']
+        # Zeige Nachrichten nur an, wenn weniger als 10 Sekunden vergangen sind
+        if time_since_login.total_seconds() <= 10:
+            storno_entries = user_db.storno_table.search(Query().email == user_email)
+            for entry in storno_entries:
+                message = entry.get('message', 'Keine zusätzliche Nachricht vorhanden.')
+                st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {message}")
+                # Beachte: Nach 10 Sekunden werden keine neuen Nachrichten mehr angezeigt, bereits angezeigte bleiben jedoch sichtbar.
 
 
 
