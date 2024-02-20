@@ -146,8 +146,10 @@ def display_storno_entries():
             st.write("Keine stornierten Reservierungen vorhanden.")
 
 def display_stats():
+    from Stats import func_1
     if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
-        st.write('Statistik')
+        st.write('Reservierte Räume')
+        st.table(func_1())
 
 
 
