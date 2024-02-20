@@ -80,9 +80,8 @@ class UserDatabase:
             reservation['doc_id'] = reservation.doc_id  # Zugriff auf die interne doc_id von TinyDB
         return reservations  # Gib die aktualisierten Reservierungen zurück
     
-    
 
-    def admin_book_room(self, room_number, date, start_time, end_time):
+    def admin_book_room(self, room_number, date, start_time, end_time, user_email):
         existing_reservations = self.get_reservations_for_room(room_number)
     
         # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
@@ -91,14 +90,14 @@ class UserDatabase:
                 # Storniere die vorhandene Buchung
                 self.cancel_reservation(reservation.doc_id)
                 # Füge die neue Buchung hinzu
-                success, message = self.add_reservation('admin', room_number, date, start_time, end_time)
+                success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
                 if success:
                     return True, "Die Buchung wurde erfolgreich aktualisiert."
                 else:
                     return False, f"Fehler beim Aktualisieren der Buchung: {message}"
 
         # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
-        success, message = self.add_reservation('admin', room_number, date, start_time, end_time)
+        success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
         if success:
             return True, "Buchung erfolgreich hinzugefügt."
         else:
