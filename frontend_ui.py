@@ -204,10 +204,20 @@ def check_for_admin_code(input_code):
         st.session_state['is_admin'] = False
 
 def display_admin_input():
-    with st.expander("Admin-Zugang"):
-        admin_code = st.text_input("Admin Code eingeben", key="admin_code", type="password")
-        if st.button("Admin-Zugang bestätigen"):
-            check_for_admin_code(admin_code)
+    # Überprüfen, ob der Benutzer bereits als Admin angemeldet ist
+    if st.session_state.get('is_admin'):
+        if st.sidebar.button("Ausloggen"):
+            # Setze den Admin-Status zurück
+            st.session_state['is_admin'] = False
+            st.sidebar.success("Sie wurden erfolgreich als Admin ausgeloggt.")
+            st.experimental_rerun()
+    else:
+        with st.sidebar.expander("Admin-Zugang"):
+            admin_code = st.text_input("Admin Code eingeben", key="admin_code", type="password")
+            if st.button("Admin-Zugang bestätigen"):
+                # Hier wird die bereits existierende Funktion aufgerufen, die den Admin-Code überprüft
+                check_for_admin_code(admin_code)
+
 
 
 def display_login_and_registration():
