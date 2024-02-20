@@ -13,6 +13,7 @@ class UserDatabase:
         self.storno_table = self.db.table('storno')  # Füge das storno_table Attribut hinzu
         self.MCI_EMAIL_REGEX = r'^[a-zA-Z]{2}\d{4}@mci4me\.at$'
 
+
     def check_mci_email(self, email):
         return re.match(self.MCI_EMAIL_REGEX, email) is not None
 
@@ -128,6 +129,7 @@ class UserDatabase:
                 return True
         return False
     
+
     def notify_user_of_cancellation(self, email, room_number, date):
         # Hier können Sie den Code einfügen, der die Benachrichtigung an den Benutzer sendet,
         # z. B. per E-Mail, über ein internes Nachrichtensystem usw.
@@ -139,6 +141,7 @@ class UserDatabase:
         reservation = self.reservation_table.get(doc_id=reservation_id)
         if reservation:
             # Benutzer über die Stornierung benachrichtigen
+            print("Stornierung erfolgt, Benutzer wird benachrichtigt...")
             self.notify_user_of_cancellation(reservation['email'], reservation['room_number'], reservation['date'])
             # Erstelle einen Storno-Eintrag vor dem Löschen
             self.storno_table.insert({
@@ -205,6 +208,6 @@ class UserDatabase:
 
 if __name__ == "__main__":
     db = UserDatabase()
-    #  Test
+    # Test
     email = "mj5804@mci4me.at"
     db.verify_reservations(email)
