@@ -103,3 +103,23 @@ if __name__ == "__main__":
     #  Test
     email = "mj5804@mci4me.at"
     db.verify_reservations(email)
+
+# Functionen Verschieben
+
+#1
+from datetime import datetime, timedelta
+import locale
+
+# Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
+# Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
+#locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
+def set_supported_locale():
+    locales_to_try = ['en_US.UTF-8', 'en_US.utf8', 'English_United States.1252', 'en_US']
+    for loc in locales_to_try:
+        try:
+            locale.setlocale(locale.LC_TIME, loc)
+            print(f"Locale erfolgreich auf {loc} gesetzt.")
+            return  # Erfolg, breche die Schleife ab
+        except locale.Error:
+            continue  # Bei Misserfolg, versuche die nächste Locale
+    print("Warnung: Keine der Locales konnte gesetzt werden.")
