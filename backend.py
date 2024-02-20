@@ -128,10 +128,18 @@ class UserDatabase:
                 return True
         return False
     
+    def notify_user_of_cancellation(self, email, room_number, date):
+        # Hier können Sie den Code einfügen, der die Benachrichtigung an den Benutzer sendet,
+        # z. B. per E-Mail, über ein internes Nachrichtensystem usw.
+        # In diesem Beispiel drucken wir einfach eine Nachricht aus.
+        print(f"Benachrichtigung: Ihre Reservierung für Raum {room_number} am {date} wurde storniert.")
+
     def cancel_reservation(self, reservation_id):
         # Finde die Reservierung anhand ihrer ID
         reservation = self.reservation_table.get(doc_id=reservation_id)
         if reservation:
+            # Benutzer über die Stornierung benachrichtigen
+            self.notify_user_of_cancellation(reservation['email'], reservation['room_number'], reservation['date'])
             # Erstelle einen Storno-Eintrag vor dem Löschen
             self.storno_table.insert({
                 'email': reservation['email'],
