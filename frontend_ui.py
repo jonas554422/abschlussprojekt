@@ -6,25 +6,15 @@ import pandas as pd
 from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
 
+
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
 # Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
 #locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
 
-def set_supported_locale():
-    locales_to_try = ['en_US.UTF-8', 'en_US.utf8', 'English_United States.1252', 'en_US']
-    for loc in locales_to_try:
-        try:
-            locale.setlocale(locale.LC_TIME, loc)
-            print(f"Locale erfolgreich auf {loc} gesetzt.")
-            return  # Erfolg, breche die Schleife ab
-        except locale.Error:
-            continue  # Bei Misserfolg, versuche die nächste Locale
-    print("Warnung: Keine der Locales konnte gesetzt werden.")
-
-set_supported_locale()
-
 # Pfad zur Datenbank für verfügbare Räume
 DB_PATH = 'verfuegbare_raeume_db.json'
+user_db = UserDatabase('reservation.json', 'verfuegbare_raeume_db.json')
+
 
 # Initialisierung des Session State für den Anmeldestatus, falls noch nicht vorhanden
 if 'logged_in_user' not in st.session_state:
@@ -60,51 +50,6 @@ def display_registration():
             st.sidebar.error(registration_result)
 
 
-def calculate_availability(available_times, reservations):
-    new_availability = []
-
-    for slot in available_times:
-        slot_start = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar von']}", '%A, %d.%m.%Y %H:%M')
-        slot_end = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar bis']}", '%A, %d.%m.%Y %H:%M')
-
-        # Filtere Reservierungen für das Datum des aktuellen Slots
-        daily_reservations = [r for r in reservations if r['date'] == slot['Datum']]
-
-        # Sortiere Reservierungen nach Startzeit
-        daily_reservations.sort(key=lambda r: r['start_time'])
-
-        # Füge den Slot-Start als Anfangspunkt hinzu
-        time_points = [slot_start]
-
-        for reservation in daily_reservations:
-            res_start = datetime.strptime(f"{reservation['date']} {reservation['start_time']}", '%A, %d.%m.%Y %H:%M')
-            res_end = datetime.strptime(f"{reservation['date']} {reservation['end_time']}", '%A, %d.%m.%Y %H:%M')
-
-            # Überprüfe, ob die Reservierung innerhalb des Slots liegt und füge Start-/Endzeit zur Liste hinzu
-            if res_start >= slot_start and res_end <= slot_end:
-                time_points.append(res_start)
-                time_points.append(res_end)
-
-        # Füge den Slot-End als Endpunkt hinzu
-        time_points.append(slot_end)
-
-        # Erzeuge verfügbare Intervalle basierend auf den Zeitpunkten
-        for i in range(0, len(time_points), 2):
-            if i+1 < len(time_points):
-                start = time_points[i]
-                end = time_points[i+1]
-                # Überspringe, wenn Start und End identisch sind
-                if start != end:
-                    new_availability.append({
-                        'Datum': start.strftime('%A, %d.%m.%Y'),
-                        'Verfuegbar von': start.strftime('%H:%M'),
-                        'Verfuegbar bis': end.strftime('%H:%M')
-                    })
-
-    return new_availability
-
-
-
 def display_available_rooms():
     if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
         db = TinyDB(DB_PATH)
@@ -120,7 +65,7 @@ def display_available_rooms():
             reservations = user_db.get_reservations_for_room(selected_room)
 
             # Berechne die verfügbaren Zeitslots basierend auf den Reservierungen
-            available_times = calculate_availability(available_times_list, reservations)
+            available_times = user_db.calculate_availability(available_times_list, reservations)
 
             # Erstelle ein DataFrame für die berechneten verfügbaren Zeiten
             if available_times:
@@ -138,29 +83,38 @@ def display_available_rooms():
 
             if start_time >= end_time:
                 st.error("Die Startzeit muss vor der Endzeit liegen.")
-            else:
-                formatted_date = date.strftime('%A, %d.%m.%Y')
-                formatted_start_time = start_time.strftime('%H:%M')
-                formatted_end_time = end_time.strftime('%H:%M')
+                return
 
-                if st.button("Raum buchen"):
-                    if admin_book_room(selected_room, formatted_date, formatted_start_time, formatted_end_time):
-                        # Aktualisiere die verfügbaren Zeiten nach erfolgreicher Buchung
-                        updated_reservations = user_db.get_reservations_for_room(selected_room)
-                        updated_available_times = calculate_availability(available_times_list, updated_reservations)
+            formatted_date = date.strftime('%A, %d.%m.%Y')
+            formatted_start_time = start_time.strftime('%H:%M')
+            formatted_end_time = end_time.strftime('%H:%M')
 
-                        # Aktualisiere das DataFrame für die neuen verfügbaren Zeiten
-                        if updated_available_times:
-                            updated_available_times_df = pd.DataFrame(updated_available_times)
-                            updated_available_times_df['Datum'] = pd.to_datetime(updated_available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
-                            updated_available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
-                            
-                            # Aktualisiere die vorhandene Tabelle mit den neuen verfügbaren Zeiten
-                            table_placeholder.dataframe(updated_available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
+            # Korrigiere den Aufruf von admin_book_room über die user_db Instanz
+            if st.button("Raum buchen"):
+                success, message = user_db.admin_book_room(selected_room, formatted_date, formatted_start_time, formatted_end_time)
+                if success:
+                    # Aktualisiere die verfügbaren Zeiten nach erfolgreicher Buchung
+                    updated_reservations = user_db.get_reservations_for_room(selected_room)
+                    updated_available_times = user_db.calculate_availability(available_times_list, updated_reservations)
+
+                    # Aktualisiere das DataFrame für die neuen verfügbaren Zeiten
+                    if updated_available_times:
+                        updated_available_times_df = pd.DataFrame(updated_available_times)
+                        updated_available_times_df['Datum'] = pd.to_datetime(updated_available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
+                        updated_available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
+
+                        # Aktualisiere die vorhandene Tabelle mit den neuen verfügbaren Zeiten
+                        table_placeholder.dataframe(updated_available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
+                    st.success("Raum erfolgreich gebucht.")
+                else:
+                    st.error(f"Buchung fehlgeschlagen: {message}")
         else:
             st.write("Keine verfügbaren Räume gefunden.")
     else:
         st.error("Bitte einloggen, um das Buchungssystem zu nutzen.")
+
+
+
 
 
 
@@ -217,26 +171,26 @@ def display_storno_entries():
         else:
             st.write("Keine stornierten Reservierungen vorhanden.")
 
+
+# Angenommen, diese Funktion wird aufgerufen, wenn sich der Benutzer erfolgreich anmeldet
+def user_logged_in():
+    st.session_state['last_login_time'] = datetime.datetime.now()
+
+
+# Funktion zum Anzeigen von Stornierungsnachrichten, begrenzt auf 15 Sekunden nach der Anmeldung
 def display_storno_notifications(user_email):
+    # Prüfen, ob 'last_login_time' im session_state existiert und berechnen, wie viel Zeit seitdem vergangen ist
+    if 'last_login_time' in st.session_state:
+        elapsed_time = datetime.datetime.now() - st.session_state['last_login_time']
+        if elapsed_time.total_seconds() > 10:
+            return  # Wenn mehr als 15 Sekunden vergangen sind, zeige keine Stornierungsnachrichten
+
     storno_entries = user_db.storno_table.search(Query().email == user_email)
     for entry in storno_entries:
-        # Verwende die .get()-Methode mit einem Standardwert, um KeyError zu vermeiden
         message = entry.get('message', 'Keine zusätzliche Nachricht vorhanden.')
         st.warning(f"Stornierte Buchung: Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde storniert. {message}")
-        # Optional: Entfernen der angezeigten Stornierungsnachricht aus der Datenbank, falls gewünscht
-        # user_db.storno_table.remove(doc_ids=[entry.doc_id])
-        if not st.session_state['confirm_cancel']:  # Überprüfen, ob das E-Mail-Eingabefeld für Stornierungsnachrichten angezeigt wird
-            # Überprüfen, ob der Benutzer nicht eingeloggt ist, um den "Einloggen (Storno)"-Button zu vermeiden
-            if not st.session_state.get('logged_in_user'):
-                if st.sidebar.button("Einloggen (Storno)", key="login_button_storno"):
-                    if user_db.authenticate(login_email):
-                        st.session_state['logged_in_user'] = login_email
-                        st.sidebar.success('Anmeldung erfolgreich!')
-                        # Rufe hier die Funktion auf, nachdem der Benutzer erfolgreich angemeldet wurde
-                        display_storno_notifications(login_email)
-                        st.experimental_rerun()
-                    else:
-                        st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
+        # Beachte: Die Nachrichten werden nicht automatisch nach 15 Sekunden entfernt,
+        # sie werden nur nicht mehr angezeigt, wenn diese Funktion mehr als 15 Sekunden nach der Anmeldung aufgerufen wird.
 
 
 
@@ -316,35 +270,6 @@ def display_admin_interface():
                 st.experimental_rerun()  # Seite neu laden, um die Änderungen zu reflektieren
     else:
         st.write("Keine Reservierungen vorhanden.")
-
-def admin_book_room(room_number, date, start_time, end_time):
-    existing_reservations = user_db.get_reservations_for_room(room_number)
-    
-    # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
-    for reservation in existing_reservations:
-        if reservation['date'] == date and reservation['start_time'] == start_time:
-            # Storniere die vorhandene Buchung
-            user_db.cancel_reservation(reservation.doc_id)
-            # Füge die neue Buchung hinzu
-            success, message = user_db.add_reservation('admin', room_number, date, start_time, end_time)
-            if success:
-                st.success("Die Buchung wurde erfolgreich aktualisiert.")
-                return True
-            else:
-                st.error(f"Fehler beim Aktualisieren der Buchung: {message}")
-                return False
-
-    # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
-    success, message = user_db.add_reservation('admin', room_number, date, start_time, end_time)
-    if success:
-        st.success("Buchung erfolgreich hinzugefügt.")
-        return True
-    else:
-        st.error(f"Fehler beim Hinzufügen der Buchung: {message}")
-        return False
-
-
-
 
 
 def main():
