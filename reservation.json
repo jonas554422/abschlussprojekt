@@ -1,1 +1,1 @@
-{"_default": {"1": {"email": "mj5804@mci4me.at"}}}
+{"_default": {"1": {"email": "mj5804@mci4me.at"}, "2": {"email": "bj5954@mci4me.at"}}, "reservations": {}, "storno": {"1": {"email": "bj5954@mci4me.at", "room_number": "4B-001", "date": "Thursday, 22.02.2024", "start_time": "08:00", "end_time": "09:00", "storno_time": "2024-02-21 18:12:11", "message": "Ihre Buchung wurde storniert."}}}
