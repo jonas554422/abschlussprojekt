@@ -13,6 +13,7 @@ class UserDatabase:
         self.storno_table = self.db.table('storno')  # Füge das storno_table Attribut hinzu
         self.MCI_EMAIL_REGEX = r'^[a-zA-Z]{2}\d{4}@mci4me\.at$'
 
+
     def check_mci_email(self, email):
         return re.match(self.MCI_EMAIL_REGEX, email) is not None
 
@@ -80,9 +81,8 @@ class UserDatabase:
             reservation['doc_id'] = reservation.doc_id  # Zugriff auf die interne doc_id von TinyDB
         return reservations  # Gib die aktualisierten Reservierungen zurück
     
-    
 
-    def admin_book_room(self, room_number, date, start_time, end_time):
+    def admin_book_room(self, room_number, date, start_time, end_time, user_email):
         existing_reservations = self.get_reservations_for_room(room_number)
     
         # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
@@ -91,14 +91,14 @@ class UserDatabase:
                 # Storniere die vorhandene Buchung
                 self.cancel_reservation(reservation.doc_id)
                 # Füge die neue Buchung hinzu
-                success, message = self.add_reservation('admin', room_number, date, start_time, end_time)
+                success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
                 if success:
                     return True, "Die Buchung wurde erfolgreich aktualisiert."
                 else:
                     return False, f"Fehler beim Aktualisieren der Buchung: {message}"
 
         # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
-        success, message = self.add_reservation('admin', room_number, date, start_time, end_time)
+        success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
         if success:
             return True, "Buchung erfolgreich hinzugefügt."
         else:
@@ -129,10 +129,20 @@ class UserDatabase:
                 return True
         return False
     
+
+    def notify_user_of_cancellation(self, email, room_number, date):
+        # Hier können Sie den Code einfügen, der die Benachrichtigung an den Benutzer sendet,
+        # z. B. per E-Mail, über ein internes Nachrichtensystem usw.
+        # In diesem Beispiel drucken wir einfach eine Nachricht aus.
+        print(f"Benachrichtigung: Ihre Reservierung für Raum {room_number} am {date} wurde storniert.")
+
     def cancel_reservation(self, reservation_id):
         # Finde die Reservierung anhand ihrer ID
         reservation = self.reservation_table.get(doc_id=reservation_id)
         if reservation:
+            # Benutzer über die Stornierung benachrichtigen
+            print("Stornierung erfolgt, Benutzer wird benachrichtigt...")
+            self.notify_user_of_cancellation(reservation['email'], reservation['room_number'], reservation['date'])
             # Erstelle einen Storno-Eintrag vor dem Löschen
             self.storno_table.insert({
                 'email': reservation['email'],
@@ -198,6 +208,6 @@ class UserDatabase:
 
 if __name__ == "__main__":
     db = UserDatabase()
-    #  Test
+    # Test
     email = "mj5804@mci4me.at"
     db.verify_reservations(email)
