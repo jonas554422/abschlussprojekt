@@ -181,6 +181,11 @@ def display_storno_notifications(user_db, user_email):
                 # Markiere, dass Stornierungsnachrichten angezeigt wurden
                 st.session_state['storno_shown'] = True
 
+
+
+
+
+
 ADMIN_SECRET_CODE = "123"  # Das spezielle Kennwort für den Admin-Zugang
 
 def check_for_admin_code(input_code):
@@ -208,23 +213,16 @@ def display_admin_input():
 
 
 def display_login_and_registration():
-    # Anmeldeformular anzeigen
-    login_email = st.text_input("Email einloggen")
-    if st.button("Einloggen"):
+    login_email = st.sidebar.text_input("Email einloggen", key="login_email")
+    if st.sidebar.button("Einloggen", key="login_button"):
         if user_db.authenticate(login_email):
             st.session_state['logged_in_user'] = login_email
-            st.success('Anmeldung erfolgreich!')
+            # Wenn die Authentifizierung erfolgreich ist, nehmen wir an, dass der Benutzer registriert ist.
+            st.session_state['is_registered'] = True
+            st.sidebar.success('Anmeldung erfolgreich!')
+            st.experimental_rerun()
         else:
-            st.error('Ungültige E-Mail-Adresse oder nicht registriert.')
-
-    # Registrierungsformular anzeigen
-    reg_email = st.text_input("Email registrieren")
-    if st.button("Registrieren"):
-        registration_result = user_db.register_user(reg_email)
-        if registration_result is True:
-            st.success('Registrierung erfolgreich!')
-        else:
-            st.error(registration_result)
+            st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
 
     # Überprüfen, ob der Benutzer nicht als Admin angemeldet ist und ob der Anmeldestatus nicht auf 'True' gesetzt ist,
     # was darauf hindeutet, dass der Benutzer bereits registriert ist.
