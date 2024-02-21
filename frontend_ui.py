@@ -271,6 +271,9 @@ def display_admin_interface():
     else:
         st.write("Keine Reservierungen vorhanden.")
 
+def display_stats():
+    st.write("Statistik")
+
 
 def main():
     st.title('Raumbuchungssystem')
@@ -290,7 +293,7 @@ def main():
     # Definiere die Menüoptionen abhängig vom Anmeldestatus des Benutzers oder ob es sich um einen Admin handelt
     menu_options = ["Bitte wählen"]
     if st.session_state.get('logged_in_user') or st.session_state.get('is_admin'):
-        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen"]
+        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Statistik"]
 
     # Lasse den Benutzer das Menü auswählen
     selected_option = st.sidebar.selectbox("Menü", menu_options, index=0)
@@ -304,6 +307,9 @@ def main():
         display_mci_daten_aktualisierung()
     elif selected_option == "Stornierte Reservierungen":
         display_storno_entries()
+    elif selected_option == "Statistik":
+        display_stats()
+
 
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
