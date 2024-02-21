@@ -88,9 +88,8 @@ class UserDatabase:
         # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
         for reservation in existing_reservations:
             if reservation['date'] == date and reservation['start_time'] == start_time:
-                # Storniere die vorhandene Buchung
-                self.cancel_reservation(reservation.doc_id)
-                # Füge die neue Buchung hinzu
+                # Storniere die vorhandene Buchung, kennzeichne die Stornierung als vom Administrator
+                self.cancel_reservation(reservation.doc_id, cancelled_by_admin=True)
                 success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
                 if success:
                     return True, "Die Buchung wurde erfolgreich aktualisiert."
@@ -136,14 +135,18 @@ class UserDatabase:
         # In diesem Beispiel drucken wir einfach eine Nachricht aus.
         print(f"Benachrichtigung: Ihre Reservierung für Raum {room_number} am {date} wurde storniert.")
 
-    def cancel_reservation(self, reservation_id):
+    def cancel_reservation(self, reservation_id, cancelled_by_admin=False):
         # Finde die Reservierung anhand ihrer ID
         reservation = self.reservation_table.get(doc_id=reservation_id)
         if reservation:
             # Benutzer über die Stornierung benachrichtigen
             print("Stornierung erfolgt, Benutzer wird benachrichtigt...")
             self.notify_user_of_cancellation(reservation['email'], reservation['room_number'], reservation['date'])
-            # Erstelle einen Storno-Eintrag vor dem Löschen
+
+            cancellation_message = "Ihre Buchung wurde storniert."
+            if cancelled_by_admin:
+                cancellation_message += " (Stornierung durch Administrator)"
+
             self.storno_table.insert({
                 'email': reservation['email'],
                 'room_number': reservation['room_number'],
@@ -197,6 +200,7 @@ class UserDatabase:
         for reservation in user_reservations:
             if not self.is_reservation_still_valid(reservation):
                 self.cancel_reservation(reservation.doc_id)
+
 
     def is_reservation_still_valid(self, reservation):
         available_rooms = self.available_rooms_db.search(Query().Raumnummer == reservation['room_number'])
