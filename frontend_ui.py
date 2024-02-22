@@ -5,6 +5,8 @@ import locale
 import pandas as pd
 from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
+import os
+
 
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
 # Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
@@ -185,6 +187,113 @@ def display_storno_notifications(user_db, user_email):
 
 
 
+def display_room_review_form(user_db):
+    st.header("Raum bewerten")
+    room_numbers = user_db.get_unique_room_numbers()
+    room_number = st.selectbox("Raumnummer wählen", options=room_numbers)
+    
+    # Bewertungsformular nur anzeigen, wenn nicht im Bearbeitungsmodus
+    if 'editing_review_id' not in st.session_state:
+        rating = st.slider("Bewertung", 1, 5)
+        feedback = st.text_area("Feedback")
+        photo_upload = st.file_uploader("Foto hochladen", type=["png", "jpg", "jpeg"])
+
+        if photo_upload is not None:
+            os.makedirs("uploads", exist_ok=True)
+            file_path = f"uploads/{photo_upload.name}"
+            with open(file_path, "wb") as f:
+                f.write(photo_upload.getvalue())
+        else:
+            file_path = None
+
+        if st.button("Bewertung abgeben"):
+            user_email = st.session_state.get('logged_in_user', 'anonymous')
+            photo_path = file_path
+            user_db.add_room_review(room_number, user_email, rating, feedback, photo_path=photo_path)
+            st.success("Bewertung erfolgreich abgegeben.")
+    
+    # Bearbeitungsformular
+    if 'editing_review_id' in st.session_state:
+        # Laden der zu bearbeitenden Bewertungsdetails
+        editing_review = user_db.get_review_by_id(st.session_state['editing_review_id'])
+        with st.form("edit_review"):
+            new_rating = st.slider("Bewertung anpassen", 1, 5, editing_review['rating'])
+            new_feedback = st.text_area("Feedback anpassen", editing_review['feedback'])
+            # Implementieren Sie Logik für Foto-Uploads im Bearbeitungsmodus nach Bedarf
+            submitted = st.form_submit_button("Änderungen speichern")
+            if submitted:
+                user_db.edit_room_review(st.session_state['editing_review_id'], new_rating, new_feedback)
+                st.success("Bewertung erfolgreich aktualisiert.")
+                del st.session_state['editing_review_id']  # Bearbeitungsmodus beenden
+                st.experimental_rerun()
+
+    # Anzeigen bestehender Bewertungen
+    st.write("Bisherige Bewertungen für Raum:", room_number)
+    reviews = user_db.get_room_reviews(room_number)
+    if reviews:
+        for review in reviews:
+            with st.expander(f"Bewertung von {review['email']} am {review['timestamp']}"):
+                st.write(f"Rating: {review['rating']}/5")
+                st.text(f"Feedback: {review['feedback']}")
+                if review.get('photo_path'):
+                    st.image(review['photo_path'], caption="Bewertungsfoto")
+                if review['email'] == st.session_state.get('logged_in_user'):
+                    delete_key = f"delete-{review['doc_id']}"
+                    if st.button("Stornieren", key=delete_key):
+                        user_db.cancel_room_review(review['doc_id'])
+                        st.experimental_rerun()
+                    edit_key = f"edit-{review['doc_id']}"
+                    if st.button("Bearbeiten", key=edit_key):
+                        st.session_state['editing_review_id'] = review['doc_id']
+                        st.experimental_rerun()
+    else:
+        st.write("Noch keine Bewertungen für diesen Raum vorhanden.")
+
+
+def display_all_reviews(user_db):
+    st.header("Alle Bewertungen")
+    all_reviews = user_db.get_all_reviews()
+    
+    if all_reviews:
+        for i, review in enumerate(all_reviews):
+            with st.expander(f"Bewertung {i+1} von {review['email']}"):
+                st.write(f"Bewertung von {review['email']}: {review['rating']}/5")
+                st.text(f"Feedback: {review['feedback']}")
+                if review.get('photo_path'):
+                    st.image(review['photo_path'], caption="Bewertungsfoto")
+                if st.button("Bewertung stornieren", key=f"cancel-{review['doc_id']}-{i+1}"):
+                    user_db.cancel_room_review(review['doc_id'])
+                    st.experimental_rerun()
+    else:
+        st.write("Keine Bewertungen vorhanden.")
+
+
+def display_user_reviews(user_db):
+    st.header("Meine Bewertungen")
+    user_email = st.session_state.get('logged_in_user', 'anonymous')
+    user_reviews = user_db.get_user_reviews(user_email)
+    
+    if user_reviews:
+        for i, review in enumerate(user_reviews):
+            with st.expander(f"Bewertung {i+1}"):
+                st.write(f"Bewertung für Raum {review['room_number']}: {review['rating']}/5")
+                st.text(f"Feedback: {review['feedback']}")
+                if review.get('photo_path'):
+                    st.image(review['photo_path'], caption="Bewertungsfoto")
+    else:
+        st.write("Keine Bewertungen vorhanden.")
+
+
+
+
+
+
+
+
+
+
+
+
 
 ADMIN_SECRET_CODE = "123"  # Das spezielle Kennwort für den Admin-Zugang
 
@@ -292,7 +401,7 @@ def main():
     # Definiere die Menüoptionen abhängig vom Anmeldestatus des Benutzers oder ob es sich um einen Admin handelt
     menu_options = ["Bitte wählen"]
     if st.session_state.get('logged_in_user') or st.session_state.get('is_admin'):
-        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen"]
+        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Raum bewerten", "Meine Bewertungen"]
 
     # Lasse den Benutzer das Menü auswählen
     selected_option = st.sidebar.selectbox("Menü", menu_options, index=0)
@@ -306,10 +415,16 @@ def main():
         display_mci_daten_aktualisierung()
     elif selected_option == "Stornierte Reservierungen":
         display_storno_entries()
+    elif selected_option == "Raum bewerten":  # Neuer Menüpunkt
+        display_room_review_form(user_db)  # Aufruf mit der UserDatabase-Instanz
+    elif selected_option == "Meine Bewertungen":
+        display_user_reviews(user_db)
 
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
         display_admin_interface()
+        display_all_reviews(user_db)  # Die neue Funktion zum Anzeigen aller Bewertungen
+
 
 if __name__ == "__main__":
     main()
