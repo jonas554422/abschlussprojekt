@@ -81,6 +81,90 @@ class UserDatabase:
         return reservations  # Gib die aktualisierten Reservierungen zurück
     
 
+
+
+
+
+    def get_unique_room_numbers(self):
+        rooms = self.available_rooms_db.all()
+        unique_room_numbers = list(set(room['Raumnummer'] for room in rooms))
+        return unique_room_numbers
+    
+    def add_room_review(self, room_number, email, rating, feedback, photo_path=None):
+        review = {
+            'room_number': room_number,
+            'email': email,
+            'rating': rating,
+            'feedback': feedback,
+            'photo_path': photo_path,
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.db.table('reviews').insert(review)
+
+    def edit_room_review(self, review_id, new_rating=None, new_feedback=None, new_photo_path=None):
+        updates = {}
+        if new_rating is not None:
+            updates['rating'] = new_rating
+        if new_feedback is not None:
+            updates['feedback'] = new_feedback
+        if new_photo_path is not None:
+            updates['photo_path'] = new_photo_path
+    
+        self.db.table('reviews').update(updates, doc_ids=[review_id])
+
+
+    def get_room_reviews(self, room_number):
+        reviews = self.db.table('reviews').search(Query().room_number == room_number)
+        # Füge die doc_id zu jedem Bewertungsobjekt hinzu
+        for review in reviews:
+            review['doc_id'] = review.doc_id  # TinyDB fügt jedem Dokument eine doc_id-Eigenschaft hinzu
+        return reviews
+
+    def get_review_by_id(self, review_id):
+        # Suchen der Bewertung anhand ihrer doc_id
+        review = self.db.table('reviews').get(doc_id=review_id)
+        if review:
+            # Füge die doc_id zum Review-Objekt hinzu, falls nicht schon vorhanden
+            review['doc_id'] = review_id
+            return review
+        else:
+            return None
+        
+    def get_all_reviews(self):
+        reviews = self.db.table('reviews').all()
+        for review in reviews:
+            review['doc_id'] = review.doc_id
+        return reviews
+    
+    def get_user_reviews(self, user_email):
+        # Suchen Sie alle Bewertungen für den angegebenen Benutzer
+        reviews = self.db.table('reviews').search(Query().email == user_email)
+        for review in reviews:
+            review['doc_id'] = review.doc_id
+        return reviews
+
+
+    def report_damage(self, room_number, email, description, photo_path):
+        # Implementierung des Schadensberichts
+        damage_report = {
+            'room_number': room_number,
+            'reported_by': email,
+            'description': description,
+            'photo_path': photo_path,
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.db.table('damages').insert(damage_report)
+        
+    def cancel_room_review(self, review_id):
+        self.db.table('reviews').remove(doc_ids=[review_id])
+
+
+
+    
+
+
+
+
     def admin_book_room(self, room_number, date, start_time, end_time, user_email):
         existing_reservations = self.get_reservations_for_room(room_number)
     
