@@ -1,1 +1,1 @@
-{"_default": {"1": {"email": "mj5804@mci4me.at"}, "2": {"email": "gt5002@mci4me.at"}}}
+{"_default": {"1": {"email": "mj5804@mci4me.at"}, "2": {"email": "gt5002@mci4me.at"}, "3": {"email": "st5002@mci4me.at"}}, "reservations": {"1": {"email": "gt5002@mci4me.at", "room_number": "4C-502", "date": "Thursday, 22.02.2024", "start_time": "11:04", "end_time": "12:04"}}, "reviews": {"1": {"room_number": "4C-502", "email": "gt5002@mci4me.at", "rating": 5, "feedback": "Super raum!", "photo_path": "uploads/IMG_7533.jpeg", "timestamp": "2024-02-22 12:10:12"}}}
