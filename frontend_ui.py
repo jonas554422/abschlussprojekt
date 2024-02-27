@@ -5,6 +5,7 @@ import locale
 import pandas as pd
 from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
+import matplotlib.pyplot as plt
 
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
 # Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
@@ -272,8 +273,87 @@ def display_admin_interface():
                 st.experimental_rerun()  # Seite neu laden, um die Änderungen zu reflektieren
     else:
         st.write("Keine Reservierungen vorhanden.")
-
-
+    
+def display_stats():
+    st.write("Statistik")
+    st.write("Räume und deren Reservierungszeiten:")
+    st.write("In den folgenden Bar-Charts werden zum jeweiligen Datum die Räume mit den größten Reservierungszeiten dargestellt")
+    user_db.plot_reservierte_räume()
+    ##Was soll umgesetzt werden?
+    ##1. Was sind die beliebtesten räume?
+    #l1 =[]
+    #l1:list =  user_db.get_all_reservations() #Liste aller aktuell reservierten Räume(Wer hat reserviert, Wie lang, Welchen Raum)
+#
+#
+    ##Welcher raum ist am belibtesten?
+    ##Raum wurde mehrmals gebucht oder der TimeSlot ist am längsten
+    ##plot(bar chart) von raumnummer und gebuchten Stunden
+#
+    ##neue Liste die Nur noch Raumnummer und die gebuchten Stunden enthält
+    #dict_1 = {}
+    #l2 = []
+#
+    #for item in l1:
+    #    date = item['date']
+    #    room_number = item['room_number']
+    #    start_time = datetime.strptime(item['start_time'], '%H:%M')
+    #    end_time = datetime.strptime(item['end_time'], '%H:%M')
+    #    duration_hours = (end_time - start_time).total_seconds() / 3600  # Differenz in Stunden berechnen
+#
+    #    if room_number in dict_1 and date == dict_1[room_number]['date']:
+    #        dict_1[room_number]['total_time'] += duration_hours  # Gesamtzeit für diesen Raum aktualisieren
+    #    else:
+    #        if room_number in dict_1:
+    #            # Raumnummer vorhanden, aber Datum unterscheidet sich, daher neuen Eintrag hinzufügen
+    #            l2.append({'date': dict_1[room_number]['date'], 'room_number': room_number, 'total_time': round(dict_1[room_number]['total_time'], 2)})
+    #        dict_1[room_number] = {'date': date, 'total_time': duration_hours}  # Raum hinzufügen oder aktualisieren
+#
+    ## Füge die letzten Einträge aus dict_1 zu l2 hinzu
+    #for room_number, entry in dict_1.items():
+    #    l2.append({'date': entry['date'], 'room_number': room_number, 'total_time': round(entry['total_time'], 2)})
+#
+    ##Plot:
+    ## Sortiere die Daten nach Datum
+    #l2.sort(key=lambda x: datetime.strptime(x['date'], '%A, %d.%m.%Y'))
+    #dates = sorted(set(item['date'] for item in l2), key=lambda x: datetime.strptime(x, '%A, %d.%m.%Y'))
+    #print(l2)
+    ## Daten vorbereiten
+    ##dates = set(item['date'] for item in l2)
+#
+    ## Größe der Figure basierend auf der Anzahl der Subplots anpassen
+    #fig_height = max(6, len(dates) * 3)  # Mindesthöhe von 6 Zoll festlegen
+#
+    ## Erstellen von Subplots für jedes Datum
+    #fig, axs = plt.subplots(len(dates), figsize=(10, fig_height))
+#
+    ## Schleife über jedes Datum und Erstellung des Barcharts für jeden Raum
+    #for i, date in enumerate(dates):
+    #    # Filtern der Einträge für das aktuelle Datum
+    #    filtered_entries = [item for item in l2 if item['date'] == date]
+    #    filtered_room_numbers = [entry['room_number'] for entry in filtered_entries]
+    #    filtered_total_times = [entry['total_time'] for entry in filtered_entries]
+#
+    #    # Erstellen von Barcharts für die Gesamtzeit jedes Raums an diesem Datum
+    #    ax = axs[i] if len(dates) > 1 else axs
+    #    bars = ax.bar(filtered_room_numbers, filtered_total_times)
+#
+    #    # Achsenbeschriftungen und Titel hinzufügen
+    #    ax.set_xlabel('Raumnummer')
+    #    ax.set_ylabel('Gesamtzeit (Stunden)')
+    #    ax.set_title(f'Folgende Räume wurden am {date} Reserviert')
+#
+    #    # Raumnummern als x-Achsenbeschriftungen festlegen
+    #    ax.set_xticks(range(len(filtered_room_numbers)))
+    #    ax.set_xticklabels(filtered_room_numbers, rotation=45)  # Rotation der Beschriftungen für bessere Lesbarkeit
+#
+    #    # Beschriftungen für jeden Balken hinzufügen
+    #    for bar, time in zip(bars, filtered_total_times):
+    #        ax.text(bar.get_x() + bar.get_width() / 2, time / 2, f'{time}', ha='center', va='center')
+#
+    ## Layout anpassen und Plot anzeigen
+    #plt.tight_layout()
+    #st.pyplot(fig)
+    # Layout anpassen und Plot anzeigen
 def main():
     st.title('Raumbuchungssystem')
 
@@ -292,7 +372,7 @@ def main():
     # Definiere die Menüoptionen abhängig vom Anmeldestatus des Benutzers oder ob es sich um einen Admin handelt
     menu_options = ["Bitte wählen"]
     if st.session_state.get('logged_in_user') or st.session_state.get('is_admin'):
-        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen"]
+        menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Statistik"]
 
     # Lasse den Benutzer das Menü auswählen
     selected_option = st.sidebar.selectbox("Menü", menu_options, index=0)
@@ -306,7 +386,8 @@ def main():
         display_mci_daten_aktualisierung()
     elif selected_option == "Stornierte Reservierungen":
         display_storno_entries()
-
+    elif selected_option =="Statistik":
+        display_stats()
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
         display_admin_interface()

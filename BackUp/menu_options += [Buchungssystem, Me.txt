@@ -1,0 +1,4 @@
+menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Statistik"]
+
+elif selected_option =="Statistik":
+        display_stats()

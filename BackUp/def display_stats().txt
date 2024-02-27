@@ -1,0 +1,5 @@
+def display_stats():
+    st.write("Statistik")
+    st.write("Räume und deren Reservierungszeiten:")
+    st.write("In den folgenden Bar-Charts werden zum jeweiligen Datum die Räume mit den größten Reservierungszeiten dargestellt")
+    user_db.plot_reservierte_räume()
