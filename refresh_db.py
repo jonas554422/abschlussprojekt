@@ -9,7 +9,6 @@ def leichen_beseitigung():
         #Daten generieren:
         db = TinyDB('verfuegbare_raeume_db.json')       
         daten = db.all()
-        angepasste_daten = []
         #Aktuelles Datum erzeuge
         current_date = datetime.now().date()
         #Aktuelle zeit erzeugen
@@ -17,7 +16,7 @@ def leichen_beseitigung():
 
         # Leere Liste erstellen; hier kommen die neuen Daten rein
         angepasste_daten = []
-
+        
         for item in daten:
             datum_item = item['Datum']
             #Datum in gewünschtes format bringen:
@@ -25,9 +24,12 @@ def leichen_beseitigung():
 
             #Alle Daten die älter als das aktuelle Datum sind werden nicht in die Aktuelle liste übernommen!!
             #Zeit 'Verfuegbar bis' sollte vor der aktuellen zeit liegen, ansonsten ebenfalls rausschmeißen!!
-            if datum_item>= current_date and current_time<item['Verfuegbar bis']:
+            if datum_item == current_date:
+                if current_time<item['Verfuegbar bis']:
+                    angepasste_daten.append(item)
+            elif datum_item > current_date:
                  angepasste_daten.append(item)
-
+                
         # Die angepassten Daten in die Datenbank speichern
         if angepasste_daten:
             db.truncate()  # Alte Daten in der Datenbank löschen
