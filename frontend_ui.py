@@ -451,7 +451,6 @@ def main():
     st.toast('''You can change text color 
         :red[Red] :blue[Blue] :green[Green] :orange[Orange]  :violet[Violet]
         ''')
-    if
 
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
