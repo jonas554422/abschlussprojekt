@@ -33,22 +33,31 @@ class UserDatabase:
     
 
     def is_room_available(self, room_number, date, start_time, end_time):
-        date_format = "%A, %d.%m.%Y"
+        date_format = "%A, %d.%m.%Y"  # Aktualisiert, um den Wochentag zu berücksichtigen
         time_format = "%H:%M"
-        date_obj = datetime.strptime(date, date_format)
-        start_time_obj = datetime.strptime(start_time, time_format).time()
-        end_time_obj = datetime.strptime(end_time, time_format).time()
+        try:
+            date_obj = datetime.strptime(date, date_format).date()
+            start_time_obj = datetime.strptime(start_time, time_format).time()
+            end_time_obj = datetime.strptime(end_time, time_format).time()
+        except ValueError as e:
+            print(f"Fehler beim Parsen des Datums oder der Uhrzeit: {e}")
+            return False  # oder entsprechende Fehlerbehandlung
+
         availabilities = self.available_rooms_db.search(Query().Raumnummer == room_number)
 
         for available in availabilities:
-            avail_date_obj = datetime.strptime(available['Datum'], date_format)
-            avail_start_time_obj = datetime.strptime(available['Verfuegbar von'], time_format).time()
-            avail_end_time_obj = datetime.strptime(available['Verfuegbar bis'], time_format).time()
+            try:
+                avail_date_obj = datetime.strptime(available['Datum'], date_format).date()
+                avail_start_time_obj = datetime.strptime(available['Verfuegbar von'], time_format).time()
+                avail_end_time_obj = datetime.strptime(available['Verfuegbar bis'], time_format).time()
+            except ValueError as e:
+                print(f"Fehler beim Parsen des Datums oder der Uhrzeit in Verfügbarkeiten: {e}")
+                continue  # oder entsprechende Fehlerbehandlung
 
             if date_obj == avail_date_obj and start_time_obj >= avail_start_time_obj and end_time_obj <= avail_end_time_obj:
                 return True
         return False
-    
+        
     def get_reservations_for_room(self, room_number):
         """Gibt alle Reservierungen für einen bestimmten Raum zurück."""
         reservations = self.reservation_table.search(Query().room_number == room_number)
@@ -75,6 +84,10 @@ class UserDatabase:
         })
         return True, "Reservierung erfolgreich hinzugefügt."
     
+ 
+    
+
+
     def get_all_reservations(self):
         """Holt alle Reservierungen aus der Datenbank und fügt die doc_id hinzu."""
         reservations = self.reservation_table.all()
@@ -161,34 +174,6 @@ class UserDatabase:
     def cancel_room_review(self, review_id):
         self.db.table('reviews').remove(doc_ids=[review_id])
 
-
-
-    
-
-
-
-
-    def admin_book_room(self, room_number, date, start_time, end_time, user_email):
-        existing_reservations = self.get_reservations_for_room(room_number)
-
-        # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
-        for reservation in existing_reservations:
-            if reservation['date'] == date and reservation['start_time'] == start_time:
-                # Storniere die vorhandene Buchung über die cancel_reservation Methode
-                self.cancel_reservation(reservation.doc_id)
-                # Füge die neue Buchung hinzu
-                success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)
-                if success:
-                    return True, "Die Buchung wurde erfolgreich aktualisiert."
-                else:
-                    return False, f"Fehler beim Aktualisieren der Buchung: {message}"
-
-        # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
-        success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)
-        if success:
-            return True, "Buchung erfolgreich hinzugefügt."
-        else:
-            return False, f"Fehler beim Hinzufügen der Buchung: {message}"
         
         
     def set_supported_locale():
