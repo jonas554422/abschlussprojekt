@@ -399,9 +399,10 @@ def display_stats():
         st.write("Räume und deren Reservierungszeiten:")
         st.write("In den folgenden Bar-Charts werden zum jeweiligen Datum die Räume mit den größten Reservierungszeiten dargestellt")
         user_db.plot_reservierte_räume()
-        # Eine Toast-Nachricht anzeigen
-        st.toast("Ihre Zeit läuft bald ab...")
-        time.sleep(5)
+        
+        ## Eine Toast-Nachricht anzeigen
+        #st.toast("Ihre Zeit läuft bald ab...")
+        #time.sleep(5)
     
 
 
@@ -409,27 +410,6 @@ def display_stats():
 def main():
     st.title('Raumbuchungssystem')
 
-    #Auf was muss ich für die Registrierung zugreifen
-    #Um zu testen ob das Funktioniert: jede minute eine neue Nachricht raushauen!!!
-    # Initialisiere den Zustand 'is_registered', falls noch nicht geschehen.
-
-    #def say_hello_every_minute():
-    #    current_minute = None
-    #    while True:
-    #        # Aktuelle Minute abrufen
-    #        minute = time.localtime().tm_min
-#
-    #        # Überprüfen, ob sich die Minute geändert hat
-    #        if minute != current_minute:
-    #            current_minute = minute
-    #            # Nachricht ausgeben
-    #            st.toast("Ihre Zeit läuft bald ab...")
-    #            time.sleep(10)
-#
-    #        # Eine Sekunde warten, um die CPU-Last zu reduzieren
-    #        time.sleep(60)
-# Funktion aufrufen, um "Hallo World" jede vergangene Minute auszugeben
-    #say_hello_every_minute()
     if 'is_registered' not in st.session_state:
         st.session_state['is_registered'] = False
 
@@ -445,7 +425,8 @@ def main():
     menu_options = ["Bitte wählen"]
     if st.session_state.get('logged_in_user') or st.session_state.get('is_admin'):
         menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Raum bewerten", "Meine Bewertungen", "Statistik"]
-
+        
+    #Aktuelle Zeit erstellen
     # Lasse den Benutzer das Menü auswählen
     selected_option = st.sidebar.selectbox("Menü", menu_options, index=0)
 
@@ -464,6 +445,13 @@ def main():
         display_user_reviews(user_db)
     elif selected_option =="Statistik":
         display_stats()
+    
+    #Ist die Zeit für eine Reservierung gekommen?
+    #Eine Toast-Nachricht anzeigen
+    st.toast('''You can change text color 
+        :red[Red] :blue[Blue] :green[Green] :orange[Orange]  :violet[Violet]
+        ''')
+    if
 
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
