@@ -170,21 +170,21 @@ class UserDatabase:
 
     def admin_book_room(self, room_number, date, start_time, end_time, user_email):
         existing_reservations = self.get_reservations_for_room(room_number)
-    
+
         # Überprüfen, ob bereits eine Reservierung für den angegebenen Zeitpunkt vorliegt
         for reservation in existing_reservations:
             if reservation['date'] == date and reservation['start_time'] == start_time:
-                # Storniere die vorhandene Buchung
+                # Storniere die vorhandene Buchung über die cancel_reservation Methode
                 self.cancel_reservation(reservation.doc_id)
                 # Füge die neue Buchung hinzu
-                success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
+                success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)
                 if success:
                     return True, "Die Buchung wurde erfolgreich aktualisiert."
                 else:
                     return False, f"Fehler beim Aktualisieren der Buchung: {message}"
 
         # Falls keine vorhandene Buchung gefunden wurde, füge einfach eine neue Buchung hinzu
-        success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)  # Verwende user_email statt 'admin'
+        success, message = self.add_reservation(user_email, room_number, date, start_time, end_time)
         if success:
             return True, "Buchung erfolgreich hinzugefügt."
         else:
