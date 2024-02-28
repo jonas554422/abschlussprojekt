@@ -6,6 +6,7 @@ import pandas as pd
 from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
 import os
+import time
 
 
 # Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
@@ -67,6 +68,7 @@ def display_available_rooms():
                 available_times_df = pd.DataFrame(available_times)
                 available_times_df['Datum'] = pd.to_datetime(available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
                 available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
+                available_times_df = available_times_df.sort_index()
                 table_placeholder = st.empty()
                 table_placeholder.dataframe(available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
 
@@ -95,7 +97,8 @@ def display_available_rooms():
                         updated_available_times_df = pd.DataFrame(updated_available_times)
                         updated_available_times_df['Datum'] = pd.to_datetime(updated_available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
                         updated_available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
-                        table_placeholder.dataframe(updated_available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
+                        table_placeholder.dataframe(updated_available_times_df.sort_index(), height=200)
+                        #table_placeholder.dataframe(updated_available_times_df.sort_index([['Datum', 'Verfuegbar von', 'Verfuegbar bis']]), height=200)
                     st.success("Raum erfolgreich gebucht.")
                 else:
                     st.error(f"Buchung fehlgeschlagen: {message}")
@@ -114,7 +117,7 @@ def display_user_reservations():
     if 'logged_in_user' in st.session_state and st.session_state['logged_in_user']:
         user_email = st.session_state['logged_in_user']
         user_reservations = user_db.get_user_reservations(user_email)
-
+    
         if user_reservations:
             for reservation in user_reservations:
                 doc_id = reservation.doc_id  # Zugriff auf die doc_id des aktuellen Dokuments
@@ -367,8 +370,12 @@ def display_admin_interface():
         # Erstelle eine Spalte für Stornierungsbuttons
         df_reservations['Aktion'] = df_reservations.apply(lambda row: f"Stornieren {row['doc_id']}", axis=1)
 
+        #Nach Datum sortieren:
+        df_reservations['date'] = pd.to_datetime(df_reservations['date'], format='%A, %d.%m.%Y')
+        df_reservations_sorted = df_reservations.sort_values(by='date')
+
         # Zeige das DataFrame an, ohne die 'Aktion'-Spalte, da Streamlit keine Buttons direkt in DataFrames unterstützt
-        st.dataframe(df_reservations[['email', 'room_number', 'date', 'start_time', 'end_time']], height=600)
+        st.dataframe(df_reservations_sorted[['email', 'room_number', 'date', 'start_time', 'end_time']], height=600)
 
         # Für jede Reservierung, generiere einen Stornieren-Button basierend auf der 'doc_id'
         for index, row in df_reservations.iterrows():
@@ -383,16 +390,46 @@ def display_admin_interface():
         st.write("Keine Reservierungen vorhanden.")
 
 def display_stats():
-    st.write("Statistik")
-    st.write("Räume und deren Reservierungszeiten:")
-    st.write("In den folgenden Bar-Charts werden zum jeweiligen Datum die Räume mit den größten Reservierungszeiten dargestellt")
-    user_db.plot_reservierte_räume()
+    if len(user_db.get_all_reservations()) == 0:
+        st.write("Statistik")
+        st.write("Räume und deren Reservierungszeiten:")
+        st.write("Aktuell gibt es keine Reservierungen")
+    else:
+        st.write("Statistik")
+        st.write("Räume und deren Reservierungszeiten:")
+        st.write("In den folgenden Bar-Charts werden zum jeweiligen Datum die Räume mit den größten Reservierungszeiten dargestellt")
+        user_db.plot_reservierte_räume()
+        # Eine Toast-Nachricht anzeigen
+        st.toast("Ihre Zeit läuft bald ab...")
+        time.sleep(5)
+    
+
 
 
 def main():
     st.title('Raumbuchungssystem')
 
+    #Auf was muss ich für die Registrierung zugreifen
+    #Um zu testen ob das Funktioniert: jede minute eine neue Nachricht raushauen!!!
     # Initialisiere den Zustand 'is_registered', falls noch nicht geschehen.
+
+    #def say_hello_every_minute():
+    #    current_minute = None
+    #    while True:
+    #        # Aktuelle Minute abrufen
+    #        minute = time.localtime().tm_min
+#
+    #        # Überprüfen, ob sich die Minute geändert hat
+    #        if minute != current_minute:
+    #            current_minute = minute
+    #            # Nachricht ausgeben
+    #            st.toast("Ihre Zeit läuft bald ab...")
+    #            time.sleep(10)
+#
+    #        # Eine Sekunde warten, um die CPU-Last zu reduzieren
+    #        time.sleep(60)
+# Funktion aufrufen, um "Hallo World" jede vergangene Minute auszugeben
+    #say_hello_every_minute()
     if 'is_registered' not in st.session_state:
         st.session_state['is_registered'] = False
 

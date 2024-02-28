@@ -5,6 +5,7 @@ from refresh_mci import aktualisiere_mci_daten
 import locale
 import matplotlib.pyplot as plt
 import streamlit as st
+import pandas as pd
 
 
 class UserDatabase:
@@ -239,7 +240,7 @@ class UserDatabase:
             # Lösche die Reservierung
             self.reservation_table.remove(doc_ids=[reservation_id])
 
-    def calculate_availability(self, available_times, reservations):
+    def calculate_availability(self, available_times, reservations):   
         new_availability = []
 
         for slot in available_times:
@@ -290,101 +291,79 @@ class UserDatabase:
         return False
     
     def plot_reservierte_räume(self):
-        l1 =[]
-        l1:list =  self.get_all_reservations() #Liste aller aktuell reservierten Räume(Wer hat reserviert, Wie lang, Welchen Raum)
+        #Alle reservierungen aus der Datenbank Holen
+        l1 = self.get_all_reservations()
+        #Leeres Dict und Leere liste erstellen:
+        dict_1 = {}             #Wir benötigt um die totale Buchungszeit eines Raumes zu bestimmen 
+        l2 = []                 #Liste die nur noch Datum, Raumnummer und Bunchungszeit enthält
 
-
-        #Welcher raum ist am belibtesten?
-        #Raum wurde mehrmals gebucht oder der TimeSlot ist am längsten
-        #plot(bar chart) von raumnummer und gebuchten Stunden
-
-        #neue Liste die Nur noch Raumnummer und die gebuchten Stunden enthält
-        dict_1 = {}
-        l2 = []
-
-        for item in l1:
+        for item in l1:                 #Daten extrahieren
             date = item['date']
             room_number = item['room_number']
             start_time = datetime.strptime(item['start_time'], '%H:%M')
             end_time = datetime.strptime(item['end_time'], '%H:%M')
-            duration_hours = (end_time - start_time).total_seconds() / 3600  # Differenz in Stunden berechnen
+            duration_hours = (end_time - start_time).total_seconds() / 3600  
 
-            if room_number in dict_1 and date == dict_1[room_number]['date']:
-                dict_1[room_number]['total_time'] += duration_hours  # Gesamtzeit für diesen Raum aktualisieren
+            if room_number in dict_1 and date == dict_1[room_number]['date']:       #Wenn Raum schon existiert -> Bunchungszeit vergrößern
+                dict_1[room_number]['total_time'] += duration_hours  
             else:
-                if room_number in dict_1:
-                    # Raumnummer vorhanden, aber Datum unterscheidet sich, daher neuen Eintrag hinzufügen
+                if room_number in dict_1:                                           
                     l2.append({'date': dict_1[room_number]['date'], 'room_number': room_number, 'total_time': round(dict_1[room_number]['total_time'], 2)})
-                dict_1[room_number] = {'date': date, 'total_time': duration_hours}  # Raum hinzufügen oder aktualisieren
+                dict_1[room_number] = {'date': date, 'total_time': duration_hours}  #dict_1 füttern
 
-        # Füge die letzten Einträge aus dict_1 zu l2 hinzu
         for room_number, entry in dict_1.items():
             l2.append({'date': entry['date'], 'room_number': room_number, 'total_time': round(entry['total_time'], 2)})
 
-        #Plot:
-        # Nur maxmimal 10 plots Pro Subplot, sortiert nach den Stunden!!!
-        # Noch zu implementieren!!!
-        # Sortiere die Daten nach Datum
-        # Daten vorbereiten
-        # Daten vorbereiten
-        dates = sorted(set(item['date'] for item in l2), key=lambda x: datetime.strptime(x, '%A, %d.%m.%Y'))
-
-        # Farbpalette basierend auf der Anzahl der einzigartigen Daten generieren
-        num_unique_dates = len(dates)
-        color_palette = plt.cm.get_cmap('tab10', num_unique_dates)
-
-        # Größe für jeden Subplot definieren
-        subplot_width = 10  # Breite jedes Subplots
-        subplot_height = 4  # Höhe jedes Subplots
-
-        # Gesamtanzahl der Subplots berechnen
-        num_subplots = len(dates)
-
-        # Größe der gesamten Figur basierend auf der Anzahl der Subplots anpassen
-        fig_width = subplot_width
-        fig_height = num_subplots * subplot_height
-
-        # Figure erstellen
-        if num_subplots > 1:
-            fig, axs = plt.subplots(num_subplots, figsize=(fig_width, fig_height))
+        if len(l2) == 0:
+            st.write("Keine Daten zum Plotten verfügbar.")
         else:
-            fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+            #Daten Plotten:
+    
+            dates = sorted(set(item['date'] for item in l2), key=lambda x: datetime.strptime(x, '%A, %d.%m.%Y')) #Daten Sortieren
 
-        # Schleife über jedes Datum und Erstellung des Barcharts für jeden Raum
-        for i, date in enumerate(dates):
-            # Filtern der Einträge für das aktuelle Datum
-            filtered_entries = [item for item in l2 if item['date'] == date]
-            filtered_entries.sort(key=lambda x: x['total_time'], reverse=True)  # Sortieren nach höchsten Stunden
-            filtered_entries = filtered_entries[:5]  # Begrenzung auf die 5 Einträge mit den höchsten Zeiten
-            filtered_room_numbers = [entry['room_number'] for entry in filtered_entries] 
-            filtered_total_times = [entry['total_time'] for entry in filtered_entries]
+            num_unique_dates = len(dates)
+            color_palette = plt.cm.get_cmap('tab10', num_unique_dates)      #Farben
 
-            # Farben für die Balken aus der Farbpalette auswählen
-            color = color_palette(i)
+            subplot_width = 10                                              #Plott größen                                            
+            subplot_height = 4                                                                   
 
-            # Erstellen von Barcharts für die Gesamtzeit jedes Raums an diesem Datum
+            num_subplots = len(dates)                                       # Anzahl der Subplotts soll abhängig von den Verschiedenen Daten sein
+
+            fig_width = subplot_width                                       #Größe und Breite des Plots festlegen
+            fig_height = num_subplots * subplot_height
+            #Falls fall eintritt -> nur ein subplot
             if num_subplots > 1:
-                ax = axs[i]
+                fig, axs = plt.subplots(num_subplots, figsize=(fig_width, fig_height))
             else:
-                ax = axs
-            bars = ax.bar(filtered_room_numbers, filtered_total_times, color=color)
+                fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+                axs = [ax]
+            
+            #Für jedes Datum ein subplot
+            for i, date in enumerate(dates):                                            #Daten Filtern und sortieren
+                filtered_entries = [item for item in l2 if item['date'] == date] 
+                filtered_entries.sort(key=lambda x: x['total_time'], reverse=True)
+                filtered_entries = filtered_entries[:5]                                 #Zeigt die 5 Räume mit den Größten Buchungszeiten an
+                filtered_room_numbers = [entry['room_number'] for entry in filtered_entries] 
+                filtered_total_times = [entry['total_time'] for entry in filtered_entries]
 
-            # Achsenbeschriftungen und Titel hinzufügen
-            ax.set_xlabel('Raumnummer')
-            ax.set_ylabel('Reservierte Zeit/h')
-            ax.set_title(f'Folgende Räume wurden am {date} Reserviert')
+                color = color_palette(i)
 
-            # Raumnummern als x-Achsenbeschriftungen festlegen
-            ax.set_xticks(range(len(filtered_room_numbers)))
-            ax.set_xticklabels(filtered_room_numbers, rotation=45)  # Rotation der Beschriftungen für bessere Lesbarkeit
+                ax = axs[i] if num_subplots > 1 else axs[0]                             # Subplot anwählen
 
-            # Beschriftungen für jeden Balken hinzufügen
-            for bar, time in zip(bars, filtered_total_times):
-                ax.text(bar.get_x() + bar.get_width() / 2, time / 2, f'{time}h', ha='center', va='center')
+                bars = ax.bar(filtered_room_numbers, filtered_total_times, color=color) #Barchart
 
-        # Layout anpassen und Plot anzeigen
-        plt.tight_layout()
-        st.pyplot(fig)
+                ax.set_xlabel('Raumnummer')                                             #Achsenbeschriftung
+                ax.set_ylabel('Reservierte Zeit/h')
+                ax.set_title(f'Folgende Räume wurden am {date} Reserviert')
+
+                ax.set_xticks(range(len(filtered_room_numbers)))
+                ax.set_xticklabels(filtered_room_numbers, rotation=45)  
+
+                for bar, time in zip(bars, filtered_total_times):                      #Zeit in der Mitte des Charts anzeigen lassen
+                    ax.text(bar.get_x() + bar.get_width() / 2, time / 2, f'{time}h', ha='center', va='center')
+
+            plt.tight_layout()
+            st.pyplot(fig)
 
 if __name__ == "__main__":
     db = UserDatabase()

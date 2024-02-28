@@ -15,6 +15,9 @@ def aktualisiere_mci_daten():
         # Führe free_rooms.py aus und warte auf seine Fertigstellung
         subprocess.run([python_path, 'free_rooms.py'], check=True)
 
+        #Test.py
+        subprocess.run([python_path, 'refresh_db.py'], check =True)
+
         return True, "Die MCI-Daten wurden erfolgreich aktualisiert."
     except subprocess.CalledProcessError as e:
         return False, f"Fehler bei der Ausführung der Skripte: {e}"
