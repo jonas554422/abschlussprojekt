@@ -257,6 +257,7 @@ def display_all_reviews(user_db):
             with st.expander(f"Bewertung {i+1} von {review['email']}"):
                 st.write(f"Bewertung von {review['email']}: {review['rating']}/5")
                 st.text(f"Feedback: {review['feedback']}")
+                st.text(f"Raumnummer: {review['room_number']}") 
                 if review.get('photo_path'):
                     st.image(review['photo_path'], caption="Bewertungsfoto")
                 if st.button("Bewertung stornieren", key=f"cancel-{review['doc_id']}-{i+1}"):
