@@ -2,6 +2,12 @@ import re
 from tinydb import TinyDB, Query
 from datetime import datetime
 from refresh_mci import aktualisiere_mci_daten
+import locale
+import matplotlib.pyplot as plt
+import streamlit as st
+import pandas as pd
+import os
+
 
 class UserDatabase:
     def __init__(self, db_path='reservation.json', available_rooms_path='verfuegbare_raeume_db.json'):
@@ -25,23 +31,38 @@ class UserDatabase:
 
     def authenticate(self, email):
         return self.db.contains(Query().email == email)
+    
 
     def is_room_available(self, room_number, date, start_time, end_time):
-        date_format = "%A, %d.%m.%Y"
+        date_format = "%A, %d.%m.%Y"  # Aktualisiert, um den Wochentag zu berücksichtigen
         time_format = "%H:%M"
-        date_obj = datetime.strptime(date, date_format)
-        start_time_obj = datetime.strptime(start_time, time_format).time()
-        end_time_obj = datetime.strptime(end_time, time_format).time()
+        try:
+            date_obj = datetime.strptime(date, date_format).date()
+            start_time_obj = datetime.strptime(start_time, time_format).time()
+            end_time_obj = datetime.strptime(end_time, time_format).time()
+        except ValueError as e:
+            print(f"Fehler beim Parsen des Datums oder der Uhrzeit: {e}")
+            return False  # oder entsprechende Fehlerbehandlung
+
         availabilities = self.available_rooms_db.search(Query().Raumnummer == room_number)
 
         for available in availabilities:
-            avail_date_obj = datetime.strptime(available['Datum'], date_format)
-            avail_start_time_obj = datetime.strptime(available['Verfuegbar von'], time_format).time()
-            avail_end_time_obj = datetime.strptime(available['Verfuegbar bis'], time_format).time()
+            try:
+                avail_date_obj = datetime.strptime(available['Datum'], date_format).date()
+                avail_start_time_obj = datetime.strptime(available['Verfuegbar von'], time_format).time()
+                avail_end_time_obj = datetime.strptime(available['Verfuegbar bis'], time_format).time()
+            except ValueError as e:
+                print(f"Fehler beim Parsen des Datums oder der Uhrzeit in Verfügbarkeiten: {e}")
+                continue  # oder entsprechende Fehlerbehandlung
 
             if date_obj == avail_date_obj and start_time_obj >= avail_start_time_obj and end_time_obj <= avail_end_time_obj:
                 return True
         return False
+        
+    def get_reservations_for_room(self, room_number):
+        """Gibt alle Reservierungen für einen bestimmten Raum zurück."""
+        reservations = self.reservation_table.search(Query().room_number == room_number)
+        return reservations
 
     def add_reservation(self, email, room_number, date, start_time, end_time):
         if not self.is_room_available(room_number, date, start_time, end_time):
@@ -63,14 +84,150 @@ class UserDatabase:
             'end_time': end_time
         })
         return True, "Reservierung erfolgreich hinzugefügt."
+    
+ 
+    
+
+
+    def get_all_reservations(self):
+        """Holt alle Reservierungen aus der Datenbank und fügt die doc_id hinzu."""
+        reservations = self.reservation_table.all()
+        # Aktualisiere jede Reservierung, um die doc_id einzuschließen
+        for reservation in reservations:
+            reservation['doc_id'] = reservation.doc_id  # Zugriff auf die interne doc_id von TinyDB
+        return reservations  # Gib die aktualisierten Reservierungen zurück
+    
+
+
+
+
+
+    def get_unique_room_numbers(self):
+        rooms = self.available_rooms_db.all()
+        unique_room_numbers = list(set(room['Raumnummer'] for room in rooms))
+        return unique_room_numbers
+    
+    def add_room_review(self, room_number, email, rating, feedback, photo_path=None):
+        review = {
+            'room_number': room_number,
+            'email': email,
+            'rating': rating,
+            'feedback': feedback,
+            'photo_path': photo_path,
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.db.table('reviews').insert(review)
+
+    def edit_room_review(self, review_id, new_rating=None, new_feedback=None, new_photo_path=None):
+        updates = {}
+        if new_rating is not None:
+            updates['rating'] = new_rating
+        if new_feedback is not None:
+            updates['feedback'] = new_feedback
+        if new_photo_path is not None:
+            updates['photo_path'] = new_photo_path
+    
+        self.db.table('reviews').update(updates, doc_ids=[review_id])
+
+
+    def get_room_reviews(self, room_number):
+        reviews = self.db.table('reviews').search(Query().room_number == room_number)
+        # Füge die doc_id zu jedem Bewertungsobjekt hinzu
+        for review in reviews:
+            review['doc_id'] = review.doc_id  # TinyDB fügt jedem Dokument eine doc_id-Eigenschaft hinzu
+        return reviews
+
+    def get_review_by_id(self, review_id):
+        # Suchen der Bewertung anhand ihrer doc_id
+        review = self.db.table('reviews').get(doc_id=review_id)
+        if review:
+            # Füge die doc_id zum Review-Objekt hinzu, falls nicht schon vorhanden
+            review['doc_id'] = review_id
+            return review
+        else:
+            return None
+        
+    def get_all_reviews(self):
+        reviews = self.db.table('reviews').all()
+        for review in reviews:
+            review['doc_id'] = review.doc_id
+        return reviews
+    
+    def get_user_reviews(self, user_email):
+        # Suchen Sie alle Bewertungen für den angegebenen Benutzer
+        reviews = self.db.table('reviews').search(Query().email == user_email)
+        for review in reviews:
+            review['doc_id'] = review.doc_id
+        return reviews
+
+
+    def report_damage(self, room_number, email, description, photo_path):
+        # Implementierung des Schadensberichts
+        damage_report = {
+            'room_number': room_number,
+            'reported_by': email,
+            'description': description,
+            'photo_path': photo_path,
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.db.table('damages').insert(damage_report)
+        
+    def cancel_room_review(self, review_id):
+        # Abrufen der Bewertung, um den Pfad des Fotos zu erhalten
+        review = self.db.table('reviews').get(doc_id=review_id)
+        
+        if review and 'photo_path' in review and review['photo_path']:
+            # Pfad des Fotos aus der Bewertung
+            photo_path = review['photo_path']
+            
+            # Prüfen, ob die Datei existiert, und dann löschen
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
+                print(f"Foto {photo_path} erfolgreich gelöscht.")
+            else:
+                print(f"Foto {photo_path} existiert nicht und kann nicht gelöscht werden.")
+        
+        # Entfernen der Bewertung aus der Datenbank
+        self.db.table('reviews').remove(doc_ids=[review_id])
+
+        
+        
+    def set_supported_locale():
+        locales_to_try = ['en_US.UTF-8', 'en_US.utf8', 'English_United States.1252', 'en_US']
+        for loc in locales_to_try:
+            try:
+                locale.setlocale(locale.LC_TIME, loc)
+                print(f"Locale erfolgreich auf {loc} gesetzt.")
+                return  # Erfolg, breche die Schleife ab
+            except locale.Error:
+                continue  # Bei Misserfolg, versuche die nächste Locale
+        print("Warnung: Keine der Locales konnte gesetzt werden.")
+
+    set_supported_locale()
 
     def get_user_reservations(self, email):
         return self.reservation_table.search(Query().email == email)
     
+    def check_existing_reservation(self, room_number, date, start_time):
+        reservations = self.get_reservations_for_room(room_number)
+        for reservation in reservations:
+            if (reservation['date'] == date and
+                reservation['start_time'] <= start_time <= reservation['end_time']):
+                return True
+        return False
+    
+    def notify_user_of_cancellation(self, email, room_number, date):
+        # Hier können Sie den Code einfügen, der die Benachrichtigung an den Benutzer sendet,
+        # z. B. per E-Mail, über ein internes Nachrichtensystem usw.
+        # In diesem Beispiel drucken wir einfach eine Nachricht aus.
+        print(f"Benachrichtigung: Ihre Reservierung für Raum {room_number} am {date} wurde storniert.")
+
     def cancel_reservation(self, reservation_id):
         # Finde die Reservierung anhand ihrer ID
         reservation = self.reservation_table.get(doc_id=reservation_id)
         if reservation:
+            # Benutzer über die Stornierung benachrichtigen
+            self.notify_user_of_cancellation(reservation['email'], reservation['room_number'], reservation['date'])
             # Erstelle einen Storno-Eintrag vor dem Löschen
             self.storno_table.insert({
                 'email': reservation['email'],
@@ -78,10 +235,51 @@ class UserDatabase:
                 'date': reservation['date'],
                 'start_time': reservation['start_time'],
                 'end_time': reservation['end_time'],
-                'storno_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                'storno_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'message': 'Ihre Buchung wurde storniert.'  # Nachricht über die Stornierung
             })
             # Lösche die Reservierung
             self.reservation_table.remove(doc_ids=[reservation_id])
+    
+    def delete_all_user_storno_entries(self, user_email):
+        # Lösche alle Stornierungseinträge des Users
+        self.storno_table.remove(Query().email == user_email)
+        
+
+    def calculate_availability(self, available_times, reservations):   
+        new_availability = []
+
+        for slot in available_times:
+            slot_start = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar von']}", '%A, %d.%m.%Y %H:%M')
+            slot_end = datetime.strptime(f"{slot['Datum']} {slot['Verfuegbar bis']}", '%A, %d.%m.%Y %H:%M')
+
+            daily_reservations = [r for r in reservations if r['date'] == slot['Datum']]
+            daily_reservations.sort(key=lambda r: r['start_time'])
+
+            time_points = [slot_start]
+            for reservation in daily_reservations:
+                res_start = datetime.strptime(f"{reservation['date']} {reservation['start_time']}", '%A, %d.%m.%Y %H:%M')
+                res_end = datetime.strptime(f"{reservation['date']} {reservation['end_time']}", '%A, %d.%m.%Y %H:%M')
+
+                if res_start >= slot_start and res_end <= slot_end:
+                    time_points.append(res_start)
+                    time_points.append(res_end)
+
+            time_points.append(slot_end)
+
+            for i in range(0, len(time_points), 2):
+                if i+1 < len(time_points):
+                    start = time_points[i]
+                    end = time_points[i+1]
+                    if start != end:
+                        new_availability.append({
+                            'Datum': start.strftime('%A, %d.%m.%Y'),
+                            'Verfuegbar von': start.strftime('%H:%M'),
+                            'Verfuegbar bis': end.strftime('%H:%M')
+                        })
+
+        return new_availability
+
 
 
     def verify_reservations(self, email):
@@ -97,29 +295,84 @@ class UserDatabase:
                 if available_room['Verfuegbar von'] <= reservation['start_time'] and available_room['Verfuegbar bis'] >= reservation['end_time']:
                     return True
         return False
+    
+    def plot_reservierte_räume(self):
+        #Alle reservierungen aus der Datenbank Holen
+        l1 = self.get_all_reservations()
+        #Leeres Dict und Leere liste erstellen:
+        dict_1 = {}             #Wir benötigt um die totale Buchungszeit eines Raumes zu bestimmen 
+        l2 = []                 #Liste die nur noch Datum, Raumnummer und Bunchungszeit enthält
+
+        for item in l1:                 #Daten extrahieren
+            date = item['date']
+            room_number = item['room_number']
+            start_time = datetime.strptime(item['start_time'], '%H:%M')
+            end_time = datetime.strptime(item['end_time'], '%H:%M')
+            duration_hours = (end_time - start_time).total_seconds() / 3600  
+
+            if room_number in dict_1 and date == dict_1[room_number]['date']:       #Wenn Raum schon existiert -> Bunchungszeit vergrößern
+                dict_1[room_number]['total_time'] += duration_hours  
+            else:
+                if room_number in dict_1:                                           
+                    l2.append({'date': dict_1[room_number]['date'], 'room_number': room_number, 'total_time': round(dict_1[room_number]['total_time'], 2)})
+                dict_1[room_number] = {'date': date, 'total_time': duration_hours}  #dict_1 füttern
+
+        for room_number, entry in dict_1.items():
+            l2.append({'date': entry['date'], 'room_number': room_number, 'total_time': round(entry['total_time'], 2)})
+
+        if len(l2) == 0:
+            st.write("Keine Daten zum Plotten verfügbar.")
+        else:
+            #Daten Plotten:
+    
+            dates = sorted(set(item['date'] for item in l2), key=lambda x: datetime.strptime(x, '%A, %d.%m.%Y')) #Daten Sortieren
+
+            num_unique_dates = len(dates)
+            color_palette = plt.cm.get_cmap('tab10', num_unique_dates)      #Farben
+
+            subplot_width = 10                                              #Plott größen                                            
+            subplot_height = 4                                                                   
+
+            num_subplots = len(dates)                                       # Anzahl der Subplotts soll abhängig von den Verschiedenen Daten sein
+
+            fig_width = subplot_width                                       #Größe und Breite des Plots festlegen
+            fig_height = num_subplots * subplot_height
+            #Falls fall eintritt -> nur ein subplot
+            if num_subplots > 1:
+                fig, axs = plt.subplots(num_subplots, figsize=(fig_width, fig_height))
+            else:
+                fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+                axs = [ax]
+            
+            #Für jedes Datum ein subplot
+            for i, date in enumerate(dates):                                            #Daten Filtern und sortieren
+                filtered_entries = [item for item in l2 if item['date'] == date] 
+                filtered_entries.sort(key=lambda x: x['total_time'], reverse=True)
+                filtered_entries = filtered_entries[:5]                                 #Zeigt die 5 Räume mit den Größten Buchungszeiten an
+                filtered_room_numbers = [entry['room_number'] for entry in filtered_entries] 
+                filtered_total_times = [entry['total_time'] for entry in filtered_entries]
+
+                color = color_palette(i)
+
+                ax = axs[i] if num_subplots > 1 else axs[0]                             # Subplot anwählen
+
+                bars = ax.bar(filtered_room_numbers, filtered_total_times, color=color) #Barchart
+
+                ax.set_xlabel('Raumnummer')                                             #Achsenbeschriftung
+                ax.set_ylabel('Reservierte Zeit/h')
+                ax.set_title(f'Folgende Räume wurden am {date} Reserviert')
+
+                ax.set_xticks(range(len(filtered_room_numbers)))
+                ax.set_xticklabels(filtered_room_numbers, rotation=45)  
+
+                for bar, time in zip(bars, filtered_total_times):                      #Zeit in der Mitte des Charts anzeigen lassen
+                    ax.text(bar.get_x() + bar.get_width() / 2, time / 2, f'{time}h', ha='center', va='center')
+
+            plt.tight_layout()
+            st.pyplot(fig)
 
 if __name__ == "__main__":
     db = UserDatabase()
     #  Test
     email = "mj5804@mci4me.at"
     db.verify_reservations(email)
-
-# Functionen Verschieben
-
-#1
-from datetime import datetime, timedelta
-import locale
-
-# Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
-# Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
-#locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
-def set_supported_locale():
-    locales_to_try = ['en_US.UTF-8', 'en_US.utf8', 'English_United States.1252', 'en_US']
-    for loc in locales_to_try:
-        try:
-            locale.setlocale(locale.LC_TIME, loc)
-            print(f"Locale erfolgreich auf {loc} gesetzt.")
-            return  # Erfolg, breche die Schleife ab
-        except locale.Error:
-            continue  # Bei Misserfolg, versuche die nächste Locale
-    print("Warnung: Keine der Locales konnte gesetzt werden.")
