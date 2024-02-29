@@ -65,7 +65,7 @@ class RaumVerwaltung:
             if buchung_ende < ende:
                 neue_verfuegbarkeiten.append((max(start, buchung_ende), ende))
         return neue_verfuegbarkeiten
-
+    
     def speichere_verfuegbare_raeume(self, verfuegbare_raeume):
         # Leert die Datenbank, um die neuen Daten einzufügen
         self.db.truncate()
