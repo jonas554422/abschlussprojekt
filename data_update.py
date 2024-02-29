@@ -52,7 +52,7 @@ def anpassen_und_speichern():
                 print(f"Überspringe Eintrag wegen fehlender Raumangabe: {eintrag}")
         else:
             print(f"Überspringe Eintrag wegen Fehler beim Parsen der Uhrzeit: {uhrzeit}")
-
+    
     if angepasste_daten:
         with open('angepasste_kalenderdaten.json', 'w') as f:
             json.dump(angepasste_daten, f, indent=4, default=str)
