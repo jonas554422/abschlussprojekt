@@ -132,6 +132,10 @@ def display_user_reservations():
 
 def display_mci_daten_aktualisierung():
     st.sidebar.title("MCI-Datenaktualisierung")
+    
+    # Hinweis für den Benutzer hinzufügen
+    st.sidebar.warning("Hinweis: Die Funktion zur Datenaktualisierung kann nur im Offline-Betrieb verwendet werden, da aktuell auf dem Webserver kein Browser installiert ist, welcher benötigt wird, um die Daten zu downloaden.")
+    
     if st.sidebar.button("Daten aktualisieren"):
         with st.spinner("Bitte warten Sie, die Daten werden aktualisiert..."):
             erfolg, nachricht = aktualisiere_mci_daten()
@@ -142,6 +146,7 @@ def display_mci_daten_aktualisierung():
                     user_db.verify_reservations(st.session_state['logged_in_user'])
             else:
                 st.error(nachricht)
+
 
 def display_storno_entries():
     user_db = UserDatabase()
@@ -395,7 +400,7 @@ def display_stats():
 
 
 def main():
-    st.title('Raumbuchungssystem')
+    st.title('Raumbuchung MCI-IV')
 
     if 'is_registered' not in st.session_state:
         st.session_state['is_registered'] = False
