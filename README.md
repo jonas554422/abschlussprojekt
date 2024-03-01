@@ -2,7 +2,8 @@ Programm Starten:
 
 1. Venv aktivieren 
 python -m venv venv
-venv\Scripts\activate
+Comand Prompt
+venv\Scripts\activate.bat
 
 2. Bibliotheken instalieren
 
