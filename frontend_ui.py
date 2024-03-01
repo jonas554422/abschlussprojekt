@@ -158,6 +158,19 @@ def display_storno_entries():
             st.write("Stornierte Reservierungen:")
             for entry in storno_entries:
                 st.write(f"Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde am {entry['storno_time']} storniert.")
+
+            # Wenn der Button gedrückt wird, setzen Sie eine Zustandsvariable für die Bestätigung
+            if st.button("Storno-Meldungen löschen"):
+                st.session_state['confirm_delete'] = True
+
+            # Zeige die Bestätigungsanfrage an, wenn die Zustandsvariable gesetzt ist
+            if st.session_state.get('confirm_delete', False):
+                if st.button("Bestätige die Löschung aller Storno-Meldungen"):
+                    user_db.delete_all_user_storno_entries(user_email)  # Nutzung der Methode aus UserDatabase
+                    st.success("Alle stornierten Reservierungen wurden erfolgreich gelöscht.")
+                    st.experimental_rerun()  # Seite neu laden, um Änderungen anzuzeigen
+                elif st.button("Abbrechen"):
+                    del st.session_state['confirm_delete']  # Entferne die Bestätigungszustandsvariable, um den Vorgang abzubrechen
         else:
             st.write("Keine stornierten Reservierungen vorhanden.")
 
@@ -277,19 +290,12 @@ def display_user_reviews(user_db):
             with st.expander(f"Bewertung {i+1}"):
                 st.write(f"Bewertung für Raum {review['room_number']}: {review['rating']}/5")
                 st.text(f"Feedback: {review['feedback']}")
+                st.text(f"Erstellt am: {review['timestamp']}")
+                st.text(f"Raumnummer: {review['room_number']}")
                 if review.get('photo_path'):
                     st.image(review['photo_path'], caption="Bewertungsfoto")
     else:
         st.write("Keine Bewertungen vorhanden.")
-
-
-
-
-
-
-
-
-
 
 
 
