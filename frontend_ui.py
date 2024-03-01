@@ -68,7 +68,6 @@ def display_available_rooms():
                 available_times_df = pd.DataFrame(available_times)
                 available_times_df['Datum'] = pd.to_datetime(available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
                 available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
-                available_times_df = available_times_df.sort_index()
                 table_placeholder = st.empty()
                 table_placeholder.dataframe(available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
 
@@ -84,21 +83,12 @@ def display_available_rooms():
             formatted_start_time = start_time.strftime('%H:%M')
             formatted_end_time = end_time.strftime('%H:%M')
 
-            # Ermitteln Sie die Email des aktuellen Benutzers oder verwenden 'admin' als Fallback
             user_email = st.session_state.get('logged_in_user', 'admin')
 
             if st.button("Raum buchen"):
-                # Pass user_email to the admin_book_room function
-                success, message = user_db.admin_book_room(selected_room, formatted_date, formatted_start_time, formatted_end_time, user_email)
+                # Prüfen, ob der Raum zum gewählten Zeitpunkt verfügbar ist
+                success, message = user_db.add_reservation(user_email, selected_room, formatted_date, formatted_start_time, formatted_end_time)
                 if success:
-                    updated_reservations = user_db.get_reservations_for_room(selected_room)
-                    updated_available_times = user_db.calculate_availability(available_times_list, updated_reservations)
-                    if updated_available_times:
-                        updated_available_times_df = pd.DataFrame(updated_available_times)
-                        updated_available_times_df['Datum'] = pd.to_datetime(updated_available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
-                        updated_available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
-                        table_placeholder.dataframe(updated_available_times_df.sort_index(), height=200)
-                        #table_placeholder.dataframe(updated_available_times_df.sort_index([['Datum', 'Verfuegbar von', 'Verfuegbar bis']]), height=200)
                     st.success("Raum erfolgreich gebucht.")
                 else:
                     st.error(f"Buchung fehlgeschlagen: {message}")
@@ -142,6 +132,10 @@ def display_user_reservations():
 
 def display_mci_daten_aktualisierung():
     st.sidebar.title("MCI-Datenaktualisierung")
+    
+    # Hinweis für den Benutzer hinzufügen
+    st.sidebar.warning("Hinweis: Die Funktion zur Datenaktualisierung kann nur im Offline-Betrieb verwendet werden, da aktuell auf dem Webserver kein Browser installiert ist, welcher benötigt wird, um die Daten zu downloaden.")
+    
     if st.sidebar.button("Daten aktualisieren"):
         with st.spinner("Bitte warten Sie, die Daten werden aktualisiert..."):
             erfolg, nachricht = aktualisiere_mci_daten()
@@ -152,6 +146,7 @@ def display_mci_daten_aktualisierung():
                     user_db.verify_reservations(st.session_state['logged_in_user'])
             else:
                 st.error(nachricht)
+
 
 def display_storno_entries():
     user_db = UserDatabase()
@@ -262,6 +257,7 @@ def display_all_reviews(user_db):
             with st.expander(f"Bewertung {i+1} von {review['email']}"):
                 st.write(f"Bewertung von {review['email']}: {review['rating']}/5")
                 st.text(f"Feedback: {review['feedback']}")
+                st.text(f"Raumnummer: {review['room_number']}") 
                 if review.get('photo_path'):
                     st.image(review['photo_path'], caption="Bewertungsfoto")
                 if st.button("Bewertung stornieren", key=f"cancel-{review['doc_id']}-{i+1}"):
@@ -367,14 +363,11 @@ def display_admin_interface():
             st.error("Fehler: Keine doc_id in den Reservierungsdaten gefunden.")
             return
 
-        # Erstelle eine Spalte für Stornierungsbuttons
-        df_reservations['Aktion'] = df_reservations.apply(lambda row: f"Stornieren {row['doc_id']}", axis=1)
-
-        #Nach Datum sortieren:
+        # Nach Datum sortieren
         df_reservations['date'] = pd.to_datetime(df_reservations['date'], format='%A, %d.%m.%Y')
         df_reservations_sorted = df_reservations.sort_values(by='date')
 
-        # Zeige das DataFrame an, ohne die 'Aktion'-Spalte, da Streamlit keine Buttons direkt in DataFrames unterstützt
+        # Zeige das DataFrame an
         st.dataframe(df_reservations_sorted[['email', 'room_number', 'date', 'start_time', 'end_time']], height=600)
 
         # Für jede Reservierung, generiere einen Stornieren-Button basierend auf der 'doc_id'
@@ -404,7 +397,7 @@ def dispalay_remainder(user_email):
     user_db.reminder_reservation(user_email)
         
 def main():
-    st.title('Raumbuchungssystem')
+    st.title('Raumbuchung MCI-IV')
 
     if 'is_registered' not in st.session_state:
         st.session_state['is_registered'] = False

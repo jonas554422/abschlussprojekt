@@ -7,6 +7,7 @@ pip install tinydb
 pip install beautifulsoup4
 pip install streamlit
 pip install pandas
+pip install pipreqs
 3. Passwort in data_mci eingeben
 
 
