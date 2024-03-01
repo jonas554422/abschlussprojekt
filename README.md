@@ -8,7 +8,8 @@ venv\Scripts\activate
 
 pip install -r requirements.txt
 
-3. Im Skript Login.py Login datein eingeben
+3. Im Skript Login.py Login der MCI-Daten Eingeben
+Admin Code kann hier ausgelesen Werden
 
 4. Programm ausführen
 
