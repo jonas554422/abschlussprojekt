@@ -19,4 +19,5 @@ streamlit run frontend_ui.py
 
 www.raumbuchungssystem.academy
 
+6. PDF mit genauer Beschreibung befindet sich ebenfalls im Repository 
 
