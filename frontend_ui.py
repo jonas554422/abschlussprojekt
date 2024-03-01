@@ -7,26 +7,19 @@ from backend import UserDatabase
 from refresh_mci import aktualisiere_mci_daten
 import os
 import time
-
-
-# Stellen Sie sicher, dass die Locale korrekt für die Datumsformatierung gesetzt ist
-# Achtung: Diese Zeile könnte auf nicht-englischen Systemen oder in bestimmten Umgebungen angepasst werden müssen
-#locale.setlocale(locale.LC_TIME, 'en_US.utf8' or 'English_United States.1252')
+from login import code
 
 # Pfad zur Datenbank für verfügbare Räume
 DB_PATH = 'verfuegbare_raeume_db.json'
 user_db = UserDatabase('reservation.json', 'verfuegbare_raeume_db.json')
 
 
-# Initialisierung des Session State für den Anmeldestatus, falls noch nicht vorhanden
+# Initialisierung des Session State für den Anmeldestatus
 if 'logged_in_user' not in st.session_state:
     st.session_state['logged_in_user'] = None
 if 'confirm_cancel' not in st.session_state:
     st.session_state['confirm_cancel'] = False
 
-
-# UserDatabase-Instanz erstellen
-user_db = UserDatabase('reservation.json', 'verfuegbare_raeume_db.json')
 
 def display_login():
     login_email = st.sidebar.text_input("Email einloggen", key="login_email")
@@ -43,7 +36,7 @@ def display_login():
 
 
 def display_registration():
-    reg_email = st.sidebar.text_input("Email registrieren", key="reg_email")
+    reg_email = st.sidebar.text_input("Email registrieren:", key="reg_email")
     if st.sidebar.button("Registrieren", key="register_button"):
         registration_result = user_db.register_user(reg_email)
         if registration_result is True:
@@ -96,10 +89,6 @@ def display_available_rooms():
             st.write("Keine verfügbaren Räume gefunden.")
     else:
         st.error("Bitte einloggen, um das Buchungssystem zu nutzen.")
-
-
-
-
 
 
 
@@ -159,23 +148,23 @@ def display_storno_entries():
             for entry in storno_entries:
                 st.write(f"Raum {entry['room_number']} am {entry['date']} von {entry['start_time']} bis {entry['end_time']} wurde am {entry['storno_time']} storniert.")
 
-            # Wenn der Button gedrückt wird, setzen Sie eine Zustandsvariable für die Bestätigung
+            # setzen Zustandsvariable für die Bestätigung
             if st.button("Storno-Meldungen löschen"):
                 st.session_state['confirm_delete'] = True
 
-            # Zeige die Bestätigungsanfrage an, wenn die Zustandsvariable gesetzt ist
+            # Zeige Bestätigungsanfrage an wenn die Zustandsvariable gesetzt ist
             if st.session_state.get('confirm_delete', False):
                 if st.button("Bestätige die Löschung aller Storno-Meldungen"):
-                    user_db.delete_all_user_storno_entries(user_email)  # Nutzung der Methode aus UserDatabase
+                    user_db.delete_all_user_storno_entries(user_email)  
                     st.success("Alle stornierten Reservierungen wurden erfolgreich gelöscht.")
-                    st.experimental_rerun()  # Seite neu laden, um Änderungen anzuzeigen
+                    st.experimental_rerun() # Seite neu laden
                 elif st.button("Abbrechen"):
-                    del st.session_state['confirm_delete']  # Entferne die Bestätigungszustandsvariable, um den Vorgang abzubrechen
+                    del st.session_state['confirm_delete'] # Zurücksetzen
         else:
             st.write("Keine stornierten Reservierungen vorhanden.")
 
 
-# Funktion zum Setzen des Anmeldezeitpunkts
+# Funktion zum Speichern des letzten Anmeldezeitpunkts
 def user_logged_in():
     # Speichere den aktuellen Zeitpunkt als letzten Anmeldezeitpunkt
     st.session_state['last_login_time'] = datetime.datetime.now()
@@ -197,7 +186,7 @@ def display_storno_notifications(user_db, user_email):
 
 
 
-
+# Funktion zum Anzeigen der verfügbaren Räume
 def display_room_review_form(user_db):
     st.header("Raum bewerten")
     room_numbers = user_db.get_unique_room_numbers()
@@ -260,7 +249,7 @@ def display_room_review_form(user_db):
     else:
         st.write("Noch keine Bewertungen für diesen Raum vorhanden.")
 
-
+# Funktion zum Anzeigen aller Bewertungen
 def display_all_reviews(user_db):
     st.header("Alle Bewertungen")
     all_reviews = user_db.get_all_reviews()
@@ -279,7 +268,7 @@ def display_all_reviews(user_db):
     else:
         st.write("Keine Bewertungen vorhanden.")
 
-
+# Funktion zum Anzeigen der Benutzerbewertungen
 def display_user_reviews(user_db):
     st.header("Meine Bewertungen")
     user_email = st.session_state.get('logged_in_user', 'anonymous')
@@ -300,8 +289,9 @@ def display_user_reviews(user_db):
 
 
 
-ADMIN_SECRET_CODE = "123"  # Das spezielle Kennwort für den Admin-Zugang
+ADMIN_SECRET_CODE = (code) 
 
+# Funktion zum Überprüfen des Admin-Codes
 def check_for_admin_code(input_code):
     if input_code == ADMIN_SECRET_CODE:
         st.session_state['is_admin'] = True
@@ -310,7 +300,7 @@ def check_for_admin_code(input_code):
         st.session_state['is_admin'] = False
 
 def display_admin_input():
-    # Überprüfen, ob der Benutzer bereits als Admin angemeldet ist
+    # Überprüfen ob Benutzer bereits als Admin angemeldet ist
     if st.session_state.get('is_admin'):
         if st.sidebar.button("Ausloggen"):
             # Setze den Admin-Status zurück
@@ -321,7 +311,6 @@ def display_admin_input():
         with st.sidebar.expander("Admin-Zugang"):
             admin_code = st.text_input("Admin Code eingeben", key="admin_code", type="password")
             if st.button("Admin-Zugang bestätigen"):
-                # Hier wird die bereits existierende Funktion aufgerufen, die den Admin-Code überprüft
                 check_for_admin_code(admin_code)
 
 
@@ -331,15 +320,14 @@ def display_login_and_registration():
     if st.sidebar.button("Einloggen", key="login_button"):
         if user_db.authenticate(login_email):
             st.session_state['logged_in_user'] = login_email
-            # Wenn die Authentifizierung erfolgreich ist, nehmen wir an, dass der Benutzer registriert ist.
+            # Wenn die Authentifizierung erfolgreich ist Benutzer registriert 
             st.session_state['is_registered'] = True
             st.sidebar.success('Anmeldung erfolgreich!')
             st.experimental_rerun()
         else:
             st.sidebar.error('Ungültige E-Mail-Adresse oder nicht registriert.')
 
-    # Überprüfen, ob der Benutzer nicht als Admin angemeldet ist und ob der Anmeldestatus nicht auf 'True' gesetzt ist,
-    # was darauf hindeutet, dass der Benutzer bereits registriert ist.
+    # Überprüfen, ob der Benutzer nicht als Admin angemeldet ist und ob der Anmeldestatus nicht auf True ist
     if not st.session_state.get('is_admin') and not st.session_state.get('logged_in_user'):
         reg_email = st.sidebar.text_input("Email registrieren", key="reg_email")
         if st.sidebar.button("Registrieren", key="register_button"):
@@ -351,7 +339,6 @@ def display_login_and_registration():
                 st.sidebar.error(registration_result)
 
 # Stellen Sie sicher, dass diese Zeile am Anfang des main()-Funktionskörpers steht, 
-# um den initialen Status von 'is_registered' festzulegen.
 if 'is_registered' not in st.session_state:
     st.session_state['is_registered'] = False
 
@@ -373,18 +360,16 @@ def display_admin_interface():
         df_reservations['date'] = pd.to_datetime(df_reservations['date'], format='%A, %d.%m.%Y')
         df_reservations_sorted = df_reservations.sort_values(by='date')
 
-        # Zeige das DataFrame an
         st.dataframe(df_reservations_sorted[['email', 'room_number', 'date', 'start_time', 'end_time']], height=600)
 
-        # Für jede Reservierung, generiere einen Stornieren-Button basierend auf der 'doc_id'
         for index, row in df_reservations.iterrows():
             if st.button(f"Stornieren {row['doc_id']}", key=f"cancel-{row['doc_id']}"):
                 # Führe die Stornierung durch und zeige eine Bestätigungsnachricht an
                 user_db.cancel_reservation(row['doc_id'])
                 st.success(f"Reservierung {row['doc_id']} storniert.")
-                # Optional: Nachricht an den Benutzer senden, dass seine Reservierung storniert wurde
+                # Nachricht an den Benutzer senden, dass seine Reservierung storniert wurde
                 user_db.notify_user_of_cancellation(row['email'], row['room_number'], row['date'])
-                st.experimental_rerun()  # Seite neu laden, um die Änderungen zu reflektieren
+                st.experimental_rerun()  # Seite neu laden
     else:
         st.write("Keine Reservierungen vorhanden.")
 
@@ -421,8 +406,6 @@ def main():
     if st.session_state.get('logged_in_user') or st.session_state.get('is_admin'):
         menu_options += ["Buchungssystem", "Meine Reservierungen", "MCI-Datenaktualisierung", "Stornierte Reservierungen", "Raum bewerten", "Meine Bewertungen", "Statistik"]
         
-    #Aktuelle Zeit erstellen
-    # Lasse den Benutzer das Menü auswählen
     selected_option = st.sidebar.selectbox("Menü", menu_options, index=0)
 
     # Führe Funktionen basierend auf dem ausgewählten Menüpunkt und dem Anmeldestatus aus
@@ -434,8 +417,8 @@ def main():
         display_mci_daten_aktualisierung()
     elif selected_option == "Stornierte Reservierungen":
         display_storno_entries()
-    elif selected_option == "Raum bewerten":  # Neuer Menüpunkt
-        display_room_review_form(user_db)  # Aufruf mit der UserDatabase-Instanz
+    elif selected_option == "Raum bewerten": 
+        display_room_review_form(user_db)  
     elif selected_option == "Meine Bewertungen":
         display_user_reviews(user_db)
     elif selected_option =="Statistik":
@@ -446,7 +429,7 @@ def main():
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
         display_admin_interface()
-        display_all_reviews(user_db)  # Die neue Funktion zum Anzeigen aller Bewertungen
+        display_all_reviews(user_db)  
     
 
 
