@@ -379,7 +379,7 @@ class UserDatabase:
                         st.toast(f''':green[Ihre Reservierung für den raum {item['room_number']} beginnt inerhalb der nächsten 5 min]''')
                         #Counter Session State 'func_call um 1 erhöhen 
                         st.session_state[f'item_state{i}'] +=1
-                        print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
+                        #print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
 
                 elif st.session_state[f'item_state{i}']>=2 and st.session_state[f'item_state{i}']<4:         
                     #Endet meine Reservierung in den nächsten 5 minuten?
@@ -387,16 +387,16 @@ class UserDatabase:
                         if end_time - current_time <= diff_dauer:
                             st.toast(f''':red[Ihre Reservierung für den raum {item['room_number']} endet inerhalb der nächsten 5 min]''')
                             st.session_state[f'item_state{i}']+=1
-                            print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
+                            #print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
                 #Counter reseten wenn 4 und end_time überschritten ist:
                 elif st.session_state[f'item_state{i}'] == 4 and current_time >= end_time:
                     st.session_state[f'item_state{i}'] = 0
-                    print(f"Reset -> Wert im State{i} : {st.session_state[f'item_state{i}']}")
+                    #print(f"Reset -> Wert im State{i} : {st.session_state[f'item_state{i}']}")
                 #Spezialfälle
                 # Wenn die Seite neu geladen wurde und die Reservierung bald endet
                 elif st.session_state[f'item_state{i}'] == 0 and current_time < end_time and current_time > start_time:
                     st.session_state[f'item_state{i}'] =2
-                    print(f"Quereinstieg -> Wert im State{i} : {st.session_state[f'item_state{i}']}")
+                    #print(f"Quereinstieg -> Wert im State{i} : {st.session_state[f'item_state{i}']}")
 
 
 if __name__ == "__main__":
