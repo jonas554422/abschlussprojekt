@@ -34,7 +34,7 @@ class UserDatabase:
     
 
     def is_room_available(self, room_number, date, start_time, end_time):
-        date_format = "%A, %d.%m.%Y"  # Aktualisiert, um den Wochentag zu berücksichtigen
+        date_format = "%A, %d.%m.%Y"  
         time_format = "%H:%M"
         try:
             date_obj = datetime.strptime(date, date_format).date()
@@ -42,7 +42,7 @@ class UserDatabase:
             end_time_obj = datetime.strptime(end_time, time_format).time()
         except ValueError as e:
             print(f"Fehler beim Parsen des Datums oder der Uhrzeit: {e}")
-            return False  # oder entsprechende Fehlerbehandlung
+            return False  # Wenn ein Fehler auftritt, ist der Raum nicht verfügbar
 
         availabilities = self.available_rooms_db.search(Query().Raumnummer == room_number)
 
@@ -53,11 +53,11 @@ class UserDatabase:
                 avail_end_time_obj = datetime.strptime(available['Verfuegbar bis'], time_format).time()
             except ValueError as e:
                 print(f"Fehler beim Parsen des Datums oder der Uhrzeit in Verfügbarkeiten: {e}")
-                continue  # oder entsprechende Fehlerbehandlung
+                continue  
 
             if date_obj == avail_date_obj and start_time_obj >= avail_start_time_obj and end_time_obj <= avail_end_time_obj:
                 return True
-        return False
+        return False # Wenn keine passende Verfügbarkeit gefunden wurde, ist der Raum nicht verfügbar
         
     def get_reservations_for_room(self, room_number):
         """Gibt alle Reservierungen für einen bestimmten Raum zurück."""
@@ -67,7 +67,7 @@ class UserDatabase:
     def add_reservation(self, email, room_number, date, start_time, end_time):
         if not self.is_room_available(room_number, date, start_time, end_time):
             return False, "Raum ist zu diesem Zeitpunkt nicht verfügbar."
-        # Überprüfe, ob die Reservierung bereits existiert
+        
         existing_reservations = self.reservation_table.search((Query().room_number == room_number) & 
                                                            (Query().date == date) & 
                                                            ((Query().start_time < end_time) & (Query().end_time > start_time)))
@@ -218,9 +218,6 @@ class UserDatabase:
         return False
     
     def notify_user_of_cancellation(self, email, room_number, date):
-        # Hier können Sie den Code einfügen, der die Benachrichtigung an den Benutzer sendet,
-        # z. B. per E-Mail, über ein internes Nachrichtensystem usw.
-        # In diesem Beispiel drucken wir einfach eine Nachricht aus.
         print(f"Benachrichtigung: Ihre Reservierung für Raum {room_number} am {date} wurde storniert.")
 
     def cancel_reservation(self, reservation_id):
@@ -300,8 +297,8 @@ class UserDatabase:
         #Alle reservierungen aus der Datenbank Holen
         l1 = self.get_all_reservations()
         #Leeres Dict und Leere liste erstellen:
-        dict_1 = {}             #Wir benötigt um die totale Buchungszeit eines Raumes zu bestimmen 
-        l2 = []                 #Liste die nur noch Datum, Raumnummer und Bunchungszeit enthält
+        dict_1 = {}              
+        l2 = []                 
 
         for item in l1:                 #Daten extrahieren
             date = item['date']
@@ -372,7 +369,7 @@ class UserDatabase:
             st.pyplot(fig)
         
     def reminder_reservation(self, user_email):
-        # Get Datum and Time
+        
         #Aktuelles Datum 
         current_date = datetime.now().date()        #Aktuelles Datum     
         #Aktuelle Zeit
