@@ -15,7 +15,8 @@ Admin Code kann hier ausgelesen Werden
 
 streamlit run frontend_ui.py
 
-5. Ausführen des Skriptes
+5. Webseite (Datenaktualsierung geht nur über den Offline-Modus)
 
+www.raumbuchungssystem.academy
 
 
