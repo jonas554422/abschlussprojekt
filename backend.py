@@ -6,6 +6,7 @@ import locale
 import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
+import os
 
 
 class UserDatabase:
@@ -172,7 +173,23 @@ class UserDatabase:
         self.db.table('damages').insert(damage_report)
         
     def cancel_room_review(self, review_id):
+        # Abrufen der Bewertung, um den Pfad des Fotos zu erhalten
+        review = self.db.table('reviews').get(doc_id=review_id)
+        
+        if review and 'photo_path' in review and review['photo_path']:
+            # Pfad des Fotos aus der Bewertung
+            photo_path = review['photo_path']
+            
+            # Prüfen, ob die Datei existiert, und dann löschen
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
+                print(f"Foto {photo_path} erfolgreich gelöscht.")
+            else:
+                print(f"Foto {photo_path} existiert nicht und kann nicht gelöscht werden.")
+        
+        # Entfernen der Bewertung aus der Datenbank
         self.db.table('reviews').remove(doc_ids=[review_id])
+        
 
         
         
@@ -224,6 +241,10 @@ class UserDatabase:
             })
             # Lösche die Reservierung
             self.reservation_table.remove(doc_ids=[reservation_id])
+
+    def delete_all_user_storno_entries(self, user_email):
+        # Lösche alle Stornierungseinträge des Users
+        self.storno_table.remove(Query().email == user_email)
 
     def calculate_availability(self, available_times, reservations):   
         new_availability = []
