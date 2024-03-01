@@ -1,6 +1,6 @@
 import re
 from tinydb import TinyDB, Query
-from datetime import datetime
+from datetime import datetime, timedelta
 from refresh_mci import aktualisiere_mci_daten
 import locale
 import matplotlib.pyplot as plt
@@ -364,6 +364,57 @@ class UserDatabase:
 
             plt.tight_layout()
             st.pyplot(fig)
+        
+    def reminder_reservation(self, user_email):
+        # Get Datum and Time
+        #Aktuelles Datum 
+        current_date = datetime.now().date()        #Aktuelles Datum
+        print(current_date)     
+        #Aktuelle Zeit
+        current_time = datetime.now() # Zeit im format 'datetime.datetime'
+        #Differenz -> wird für einen vergelcih benötigt
+        diff_dauer = timedelta(minutes=5)   #Diff von 5 min
+        #liste mit allen reservierungen des users
+        l1 = self.get_user_reservations(user_email)
+        #rausfiltern Wann die nächste reservierung Vorliegt
+        for i, item in enumerate(l1):
+            #für jedes item einen eigenen session_state anlegen:
+            if f'item_state{i}' not in st.session_state:
+                st.session_state[f'item_state{i}'] = 0
+            print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
+            datum_item = item['date']
+            datum_user_reservation = datetime.strptime(datum_item, '%A, %d.%m.%Y').date()
+            #Zeit mit datum Kombinieren und in format 'datetime.datetime' bringen
+            start_time = datetime.combine(datum_user_reservation, datetime.strptime(item['start_time'],"%H:%M").time()) 
+            end_time = datetime.combine(datum_user_reservation, datetime.strptime(item['end_time'],"%H:%M").time())
+
+            if datum_user_reservation == current_date:
+                if st.session_state[f'item_state{i}'] < 2:
+                    #Beginnt meine Reservierung in den nächsten 5 minuten?
+                    if start_time > current_time:
+                        if start_time - current_time <= diff_dauer:
+                            st.toast(f''':green[Ihre Reservierung für den raum {item['room_number']} beginnt inerhalb der nächsten 5 min]''')
+                            #Counter Session State 'func_call um 1 erhöhen 
+                            st.session_state[f'item_state{i}'] +=1
+                            print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
+
+                elif st.session_state[f'item_state{i}']>=2 and st.session_state[f'item_state{i}']<4:         
+                    #Endet meine Reservierung in den nächsten 5 minuten?
+                    if end_time > current_time:
+                        if end_time - current_time <= diff_dauer:
+                            st.toast(f''':red[Ihre Reservierung für den raum {item['room_number']} endet inerhalb der nächsten 5 min]''')
+                            st.session_state[f'item_state{i}']+=1
+                            print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
+                #Counter reseten wenn 4 und end_time überschritten ist:
+                elif st.session_state[f'item_state{i}'] == 4 and current_time >= end_time:
+                    st.session_state[f'item_state{i}'] = 0
+                    print(f"Rest -> Wert im State{i} : {st.session_state[f'item_state{i}']}")
+                #Spezialfälle
+                # Wenn die Seite neu geladen wurde und die Reservierung bald endet
+                elif st.session_state[f'item_state{i}'] == 0 and current_time < end_time:
+                    st.session_state[f'item_state{i}'] =2
+                    print(f"Quereinstieg -> Wert im State{i} : {st.session_state[f'item_state{i}']}")
+
 
 if __name__ == "__main__":
     db = UserDatabase()

@@ -399,14 +399,10 @@ def display_stats():
         st.write("Räume und deren Reservierungszeiten:")
         st.write("In den folgenden Bar-Charts werden zum jeweiligen Datum die Räume mit den größten Reservierungszeiten dargestellt")
         user_db.plot_reservierte_räume()
+
+def dispalay_remainder(user_email):
+    user_db.reminder_reservation(user_email)
         
-        ## Eine Toast-Nachricht anzeigen
-        #st.toast("Ihre Zeit läuft bald ab...")
-        #time.sleep(5)
-    
-
-
-
 def main():
     st.title('Raumbuchungssystem')
 
@@ -446,16 +442,13 @@ def main():
     elif selected_option =="Statistik":
         display_stats()
     
-    #Ist die Zeit für eine Reservierung gekommen?
-    #Eine Toast-Nachricht anzeigen
-    #st.toast('''You can change text color 
-        #:red[Red] :blue[Blue] :green[Green] :orange[Orange]  :violet[Violet]
-        #''')
+    dispalay_remainder(user_email)
 
     # Zeige die Admin-Oberfläche, wenn der Benutzer als Admin authentifiziert ist
     if st.session_state.get('is_admin'):
         display_admin_interface()
         display_all_reviews(user_db)  # Die neue Funktion zum Anzeigen aller Bewertungen
+    
 
 
 if __name__ == "__main__":
