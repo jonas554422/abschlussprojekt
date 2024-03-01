@@ -386,7 +386,7 @@ class UserDatabase:
             #für jedes item einen eigenen session_state anlegen:
             if f'item_state{i}' not in st.session_state:
                 st.session_state[f'item_state{i}'] = 0
-            print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
+            #print(f"Wert im State {i}: {st.session_state[f'item_state{i}']}")
             datum_item = item['date']
             datum_user_reservation = datetime.strptime(datum_item, '%A, %d.%m.%Y').date()
             #Zeit mit datum Kombinieren und in format 'datetime.datetime' bringen
