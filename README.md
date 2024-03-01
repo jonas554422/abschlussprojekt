@@ -15,4 +15,7 @@ Admin Code kann hier ausgelesen Werden
 
 streamlit run frontend_ui.py
 
+5. Ausführen des Skriptes
+
+
 
