@@ -67,7 +67,8 @@ def display_available_rooms():
             if available_times:
                 available_times_df = pd.DataFrame(available_times)
                 available_times_df['Datum'] = pd.to_datetime(available_times_df['Datum'], dayfirst=True).dt.strftime('%A, %d.%m.%Y')
-                available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
+                #available_times_df.sort_values(by=['Datum', 'Verfuegbar von'], inplace=True)
+                available_times_df = available_times_df.sort_index()
                 table_placeholder = st.empty()
                 table_placeholder.dataframe(available_times_df[['Datum', 'Verfuegbar von', 'Verfuegbar bis']], height=200)
 
