@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import Select  # Korrigierte Zeile
 import time
 from bs4 import BeautifulSoup
 from tinydb import TinyDB
+from login import username, password
 
 
 # Initialisiere den WebDriver
@@ -20,8 +21,8 @@ time.sleep(2)
 # Anmeldung
 username_input = driver.find_element(By.NAME, 'username')
 password_input = driver.find_element(By.NAME, 'password')
-username_input.send_keys('mj5804@mci4me.at')
-password_input.send_keys('SvWerder1899')
+username_input.send_keys(username)
+password_input.send_keys(password)
 password_input.send_keys(Keys.RETURN)
 time.sleep(5)
 
